@@ -1,0 +1,17 @@
+{
+  "name": "better_cs_checker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jQuery": "^1.7.4",
+    "node-horseman": "^3.2.0",
+    "phantomjs": "^2.1.7",
+    "phantomjs-prebuilt": "^2.1.13"
+  }
+}
