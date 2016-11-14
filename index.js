@@ -5,7 +5,8 @@ var state = 0,
 var OPEN_PAGE = 0,
     FILL_FORM = 1,
     LOG_IN = 2,
-    GET_HTML = 3;
+    GET_HTML = 3,
+    GET_COURSES = 4;
 
 page.onConsoleMessage = function(msg) {
     console.log(msg);
@@ -41,19 +42,26 @@ function() {
         console.log("Logging in..");
     });
 },
-function() {
-    return page.evaluate(function() {
+function(classes) {
+    var linkHash = page.evaluate(function(classes) {
         var newList = {};
         var lst = document.getElementsByTagName("a");
         var i;
-        for (i = 0; i < lst.length; i++){
-            newList[lst[i].innerHTML] = lst[i].href;
-        }
-
+        classes.forEach(function(classNo){
+            for (i = 0; i < lst.length; i++){
+                var curr = lst[i].innerHTML;
+                if (curr.indexOf(classNo) != -1){
+                    newList[classNo] = lst[i].href
+                    break;
+                }
+            }
+        })
         return newList;
-    });
+    }, classes);
+    return linkHash;
 }
 ];
+
 
 function execute(user, pw, classes) {
     interval = setInterval(function() {
@@ -65,8 +73,20 @@ function execute(user, pw, classes) {
             } else if (state == LOG_IN) {
                 steps[LOG_IN]();
             } else if (state == GET_HTML){
-                links = steps[GET_HTML]();
-                // console.log(JSON.stringify(links));
+                links = steps[GET_HTML](classes);
+                /* Uncomment to print */
+                /*
+                Object.keys(links).forEach(function(hell){
+                    console.log(hell + "\n");
+                    console.log(links[hell]);
+                });
+                */
+            } else if (state == GET_COURSES){
+                /* We need to convert a hash that maps
+                    330 -> link to page
+                    to
+                    330 -> 92.14
+                */
             }
             state++;
         }
@@ -77,4 +97,5 @@ function execute(user, pw, classes) {
     }, 100);
 }
 
-execute(my_info.username, my_info.password, null);
+
+execute(my_info.username, my_info.password, ["330", "421"]);
