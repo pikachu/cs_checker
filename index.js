@@ -43,12 +43,14 @@ function() {
 },
 function() {
     return page.evaluate(function() {
+        var newList = {};
         var lst = document.getElementsByTagName("a");
         var i;
         for (i = 0; i < lst.length; i++){
-            console.log(lst[i]);
+            newList[lst[i].innerHTML] = lst[i].href;
         }
-        return lst;
+
+        return newList;
     });
 }
 ];
@@ -64,10 +66,7 @@ function execute(user, pw, classes) {
                 steps[LOG_IN]();
             } else if (state == GET_HTML){
                 links = steps[GET_HTML]();
-                var i;
-                for (i = 0; i < links.length; i++){
-                    console.log(links[i]);
-                }
+                // console.log(JSON.stringify(links));
             }
             state++;
         }
