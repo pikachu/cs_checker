@@ -42,10 +42,13 @@ function() {
     });
 },
 function() {
-    page.evaluate(function() {
-        return [].map.call(document.querySelectorAll('a'), function(link) {
-            return link.getAttribute('href');
-        });
+    return page.evaluate(function() {
+        var lst = document.getElementsByTagName("a");
+        var i;
+        for (i = 0; i < lst.length; i++){
+            console.log(lst[i]);
+        }
+        return lst;
     });
 }
 ];
@@ -60,7 +63,11 @@ function execute(user, pw, classes) {
             } else if (state == LOG_IN) {
                 steps[LOG_IN]();
             } else if (state == GET_HTML){
-                console.log(steps[GET_HTML]().join('\n'));
+                links = steps[GET_HTML]();
+                var i;
+                for (i = 0; i < links.length; i++){
+                    console.log(links[i]);
+                }
             }
             state++;
         }
