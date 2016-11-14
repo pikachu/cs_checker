@@ -19,6 +19,7 @@ var steps = [
   function() {
     //Load Login Page
     page.open("https://grades.cs.umd.edu/classWeb/login.cgi");
+    console.log("Opened grades page.")
   },
   function() {
     //Enter Credentials
@@ -27,31 +28,24 @@ var steps = [
       var arr = document.getElementsByTagName("form");
       arr[0].elements["user"].value = my_info.username;
       arr[0].elements["password"].value = my_info.password;
-      console.log(arr[0].elements["user"].value);
-      console.log(arr[0].elements["password"].value);
+      console.log("Filling out info.");
     }, my_info);
   },
   function() {
-    //Login
     page.evaluate(function() {
-
-      var arr = document.getElementsByTagName("form");
-      console.log(arr[0].elements["user"].value);
-      console.log(arr[0].elements["password"].value);
-      arr[0].submit.click();
-      console.log(arr[0]);
-
+      document.getElementsByTagName("form")[0].submit.click();
+      console.log("Logging in..");
     });
   },
   function() {
-    // Output content of page to stdout after form has been submitted
     page.evaluate(function() {
       console.log(document.querySelectorAll('html')[0].outerHTML);
+
     });
   }
 ];
 
-
+// Calls all steps 50 ms apart
 interval = setInterval(function() {
   if (!loadInProgress && typeof steps[testindex] == "function") {
     console.log("step " + (testindex + 1));
