@@ -1,10 +1,4 @@
-var my_info = require('./config');
-/*
-var webPage = require('webpage');
-var page = webPage.create();
-*/
 var page = new WebPage();
-
 var loadInProgress = false;
 
 
@@ -22,11 +16,11 @@ page.onLoadFinished = function() {
     console.log("load finished");
 };
 
-function openPage(classes) {
+function openPage(user,pass,classes) {
     return page.open("https://grades.cs.umd.edu/classWeb/login.cgi", function(status){
         if (status === 'success'){
             console.log("Opened grades page.");
-            return fillForm(my_info.username, my_info.password, classes);
+            return fillForm(user, pass, classes);
         }
     });
 }
@@ -72,7 +66,6 @@ function getGrades(i, links){
     var id = setTimeout(function(){
         if (i != limit){
             getGradesForPage(i, links);
-            // AT THIS POINT, LINKS HAS WHAT WE WANT IT TO HAVE
         }
     }, 1000);
     Object.keys(links).forEach(function(key){
@@ -91,7 +84,6 @@ function getGrades(i, links){
 }
 
 function getGradesForPage(i, links){
-    // console.log("getGradesForPage method executing.");
     var arr = Object.keys(links);
     page.open(links[arr[i]], function(status){
         if (status === 'success'){
@@ -114,12 +106,9 @@ function getGradeOnPage(i, links){
 }
 
 function execute(user, pw, classes) {
-    openPage(classes);
+    openPage(user,pw,classes);
 }
-execute(my_info.username, my_info.password, ['330','351']);
 
 module.exports = {
     executeForUserWithClasses: execute
 }
-
-// SHOULD UNCOMMENT THIS
