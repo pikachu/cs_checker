@@ -1,5 +1,5 @@
 var creds = require('./config');
-var exec = require('./index.js');
+var exec = require('./index');
 
 var h1 = exec.executeForUserWithClasses(creds.username, creds.pw, ['216','351']);
 var h2 = exec.executeForUserWithClasses(creds.username, creds.pw, ['132','330']);

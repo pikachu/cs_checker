@@ -118,9 +118,8 @@ function execute(user, pw, classes) {
 }
 execute(my_info.username, my_info.password, ['330','351']);
 
-/*
-exports.create = {
+module.exports = {
     executeForUserWithClasses: execute
 }
-*/
+
 // SHOULD UNCOMMENT THIS
