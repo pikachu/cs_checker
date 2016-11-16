@@ -24,10 +24,10 @@ page.onLoadFinished = function() {
 };
 
 function openPage(classes) {
-    page.open("https://grades.cs.umd.edu/classWeb/login.cgi", function(status){
+    return page.open("https://grades.cs.umd.edu/classWeb/login.cgi", function(status){
         if (status === 'success'){
             console.log("Opened grades page.");
-            fillForm(my_info.username, my_info.password, classes);
+            return fillForm(my_info.username, my_info.password, classes);
         }
     });
 }
@@ -42,7 +42,7 @@ function fillForm(user, pass, classes) {
         document.getElementsByTagName("form")[0].submit.click();
     }, obj);
     setTimeout(function(){
-        getLinks(classes);
+        return getLinks(classes);
     }, 3000);
 }
 
@@ -64,7 +64,7 @@ function getLinks(classes) {
         });
         return newList;
     }, classes);
-    getGrades(0, linkHash);
+    return getGrades(0, linkHash);
 }
 
 function getGrades(i, links){
@@ -87,6 +87,7 @@ function getGrades(i, links){
            LINKS TO THE CLASSES.
         */
         phantom.exit(0);
+        return links;
     }
 }
 
@@ -111,14 +112,15 @@ function getGradeOnPage(i, links){
     }, links, i);
     links = newLinks
     getGrades((i + 1), links);
-
 }
-
-
 
 function execute(user, pw, classes) {
     openPage(classes);
 }
 
+// SHOULD UNCOMMENT THIS
+execute(my_info.username, my_info.password, ['330','351']);
 
-execute(my_info.username, my_info.password, ["330", "216"]);
+module.exports = {
+    executeForUserWithClasses: execute(user,pass,hello)
+}
