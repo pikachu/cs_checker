@@ -23,16 +23,16 @@ page.onLoadFinished = function() {
     console.log("load finished");
 };
 
-function openPage() {
+function openPage(classes) {
     page.open("https://grades.cs.umd.edu/classWeb/login.cgi", function(status){
         if (status === 'success'){
             console.log("Opened grades page.");
-            fillForm(my_info.username, my_info.password);
+            fillForm(my_info.username, my_info.password, classes);
         }
     });
 }
 
-function fillForm(user, pass) {
+function fillForm(user, pass, classes) {
     var obj = {username: user, password: pass};
     page.evaluate(function(obj) {
         console.log("Filling out info.");
@@ -42,7 +42,7 @@ function fillForm(user, pass) {
         document.getElementsByTagName("form")[0].submit.click();
     }, obj);
     setTimeout(function(){
-        getLinks(['330', '351']);
+        getLinks(classes);
     }, 3000);
 }
 
@@ -61,49 +61,64 @@ function getLinks(classes) {
                     break;
                 }
             }
-        })
+        });
         return newList;
     }, classes);
-    getGrades(linkHash);
+    getGrades(0, linkHash);
 }
 
-function getGrades(links){
-    var i = 0;
+function getGrades(i, links){
+    // console.log("getGrades method executing.");
     var limit = Object.keys(links).length;
-    var id = setInterval(function(){
-        links[Object.keys(links)[i]] = getGradesForPage(i, links);
-        i ++;
-        if (i == limit){
-            clearInterval(id);
+    var id = setTimeout(function(){
+        if (i != limit){
+            getGradesForPage(i, links);
             // AT THIS POINT, LINKS HAS WHAT WE WANT IT TO HAVE
         }
-    }, 5000);
-
+    }, 1000);
+    Object.keys(links).forEach(function(key){
+        console.log("Key: " + key + " Value: " + links[key]);
+    });
+    if (i == limit){
+        console.log("i == limit. done.");
+        /* The hash has been updated at this point
+           so that the classes (keys) point to the grade
+           in that class (values). THIS FUNCTION REPLACES THE
+           LINKS TO THE CLASSES.
+        */
+        phantom.exit(0);
+    }
 }
 
-function getGradesForPage(current, links){
+function getGradesForPage(i, links){
+    // console.log("getGradesForPage method executing.");
     var arr = Object.keys(links);
-    return page.open(links[arr[current]], function(status){
+    page.open(links[arr[i]], function(status){
         if (status === 'success'){
-            return getGradeOnPage();
+            getGradeOnPage(i, links);
         }
     });
 }
 
-function getGradeOnPage(){
-    return page.evaluate(function(){
+function getGradeOnPage(i, links){
+    // console.log("getGradeOnPage method executing.");
+    var newLinks = page.evaluate(function(links, i){
         var arr = document.getElementsByTagName('td');
-        console.log("Got tds, here is the last element we want:")
-        console.log(arr[arr.length - 3].innerHTML)
-        return arr[arr.length - 3].innerHTML;
-    });
+        console.log("Got tds, here is the last element we want:");
+        console.log(arr[arr.length - 3].innerHTML);
+        links[Object.keys(links)[i]] = arr[arr.length - 3].innerHTML;
+        return links;
+    }, links, i);
+    links = newLinks
+    getGrades((i + 1), links);
+
 }
 
 
 
 function execute(user, pw, classes) {
-    openPage();
+    openPage(classes);
 }
 
 
-execute(my_info.username, my_info.password, ["330", "351"]);
+execute(my_info.username, my_info.password, ["330", "216"]);
