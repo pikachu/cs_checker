@@ -1,13 +1,12 @@
 var my_info = require('./config');
+/*
+var webPage = require('webpage');
+var page = webPage.create();
+*/
 var page = new WebPage();
-var state = 0,
-    loadInProgress = false;
-var OPEN_PAGE = 0,
-    FILL_FORM = 1,
-    LOG_IN = 2,
-    GET_HTML = 3,
-    GET_COURSES = 4,
-    GET_GRADE = 5;
+
+var loadInProgress = false;
+
 
 page.onConsoleMessage = function(msg) {
     console.log(msg);
@@ -117,10 +116,11 @@ function getGradeOnPage(i, links){
 function execute(user, pw, classes) {
     openPage(classes);
 }
-
-// SHOULD UNCOMMENT THIS
 execute(my_info.username, my_info.password, ['330','351']);
 
-module.exports = {
-    executeForUserWithClasses: execute(user,pass,hello)
+/*
+exports.create = {
+    executeForUserWithClasses: execute
 }
+*/
+// SHOULD UNCOMMENT THIS
