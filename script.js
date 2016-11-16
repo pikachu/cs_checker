@@ -1,6 +1,7 @@
 var page = new WebPage();
 var loadInProgress = false;
-
+var system = require('system');
+var args = system.args;
 
 page.onConsoleMessage = function(msg) {
     console.log(msg);
@@ -109,6 +110,4 @@ function execute(user, pw, classes) {
     openPage(user,pw,classes);
 }
 
-module.exports = {
-    executeForUserWithClasses: execute
-}
+execute(args[1], args[2], args[3].split(','));

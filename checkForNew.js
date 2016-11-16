@@ -3,7 +3,7 @@ var knex = require('knex')({
   client: 'pg',
   connection: {
     host : 'localhost',
-    user : 'iParikh',
+    user : 'FILL IN HERE',
     password : 'postgres',
     database : 'cs_checker'
   }
@@ -11,7 +11,7 @@ var knex = require('knex')({
 
 knex.select('*').from('users').then(function(users){
     users.forEach(function(user){
-        var callStr = 'phantomjs ./caller.js ' + user.username + ' ' + user.password + ' ' + user.courses;
+        var callStr = 'phantomjs ./script.js ' + user.username + ' ' + user.password + ' ' + user.courses;
         console.log(callStr);
         exec(callStr, function(error, stdout, stderr) {
             console.log('stdout: ', stdout);
