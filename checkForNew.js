@@ -6,17 +6,14 @@ User.fetchAll().then(function(users){
     users.forEach(function(user){
         var courses = [];
         var id = user.get('id');
-        console.log("User with id " + id);
         new Grade({user_id: id})
         .fetchAll()
         .then(function(gradeRows){
             gradeRows.models.forEach(function(base){
-                console.log(base.attributes.courseCode);
                 courses.push(base.attributes.courseCode);
             });
         }).then(function(){
-            var callStr = 'phantomjs ./script.js ' + user.get('directoryId') + ' ' + user.get('directoryPass')  + ' ' + courses + ' ' + id;
-            console.log(callStr);
+            var callStr = 'node ./script.js ' + user.get('directory_id') + ' ' + user.get('directory_pass')  + ' ' + courses + ' ' + id;
             exec(callStr, function(error, stdout, stderr) {
                 console.log('stdout: ', stdout);
                 console.log('stderr: ', stderr);

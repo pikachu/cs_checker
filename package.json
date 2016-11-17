@@ -26,8 +26,10 @@
     "morgan": "^1.7.0",
     "nodemailer": "^2.3.0",
     "pg": "^4.5.1",
+    "phantom": "^3.0.3",
     "phantomjs": "^2.1.7",
-    "phantomjs-prebuilt": "^2.1.13"
+    "phantomjs-prebuilt": "^2.1.13",
+    "system": "^1.1.1"
   },
   "engines": {
     "node": "6.1.0"

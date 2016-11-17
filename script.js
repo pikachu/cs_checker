@@ -1,143 +1,136 @@
-var page = new WebPage();
-var loadInProgress = false;
-var system = require('system');
-var args = system.args;
 var userToLookup;
+var phantom = require('phantom');
+var User = require('./models/user');
+var Grade = require('./models/grade');
 
+var phInstance;
+var sitePage;
 
-page.onConsoleMessage = function(msg) {
-    console.log(msg);
-};
+var username = process.argv[2];
+var password = process.argv[3];
+var classes = process.argv[4].split(',');
+var userToLookup = process.argv[5];
 
-page.onLoadStarted = function() {
-    loadInProgress = true;
-    console.log("load started");
-};
+phantom.create()
+    .then(function(instance) {
+        console.log("Creating page.")
+        phInstance = instance;
+        return instance.createPage();
+    })
+    .then(function(page) {
+        console.log("Created page -> opening grades server page");
+        sitePage = page;
+        return page.open("https://grades.cs.umd.edu/classWeb/login.cgi");
+    })
+    .then(function(status) {
+        console.log("Status: " + status);
+        console.log("Opened grades page.");
+        var obj = {
+            username: username,
+            password: password
+        };
+        sitePage.evaluate(function(obj) {
+            var arr = document.getElementsByTagName("form");
+            arr[0].elements["user"].value = obj.username;
+            arr[0].elements["password"].value = obj.password;
+            document.getElementsByTagName("form")[0].submit.click();
+        }, obj);
 
-page.onLoadFinished = function() {
-    loadInProgress = false;
-    console.log("load finished");
-};
+        setTimeout(function() {
+            return getLinks();
+        }, 3000);
 
-function openPage(user,pass,classes) {
-    return page.open("https://grades.cs.umd.edu/classWeb/login.cgi", function(status){
-        if (status === 'success'){
-            console.log("Opened grades page.");
-            return fillForm(user, pass, classes);
-        }
-    });
-}
+        function getLinks() {
+            console.log("Getting links for classes " + classes);
+            sitePage.evaluate(function(classes) {
+                var newList = {};
+                var lst = document.getElementsByTagName("a");
+                var i;
+                classes.forEach(function(classNo) {
+                    for (i = 0; i < lst.length; i++) {
+                        var curr = lst[i].innerHTML;
+                        if (curr.indexOf(classNo) != -1) {
+                            newList[classNo] = lst[i].href
+                            console.log(lst[i].href);
+                            break;
+                        }
+                    }
+                });
+                return newList;
+            }, classes)
+            .then(function(result){
+                console.log(result)
+                getGrades(0, result);
 
-function fillForm(user, pass, classes) {
-    var obj = {username: user, password: pass};
-    page.evaluate(function(obj) {
-        console.log("Filling out info.");
-        var arr = document.getElementsByTagName("form");
-        arr[0].elements["user"].value = obj.username;
-        arr[0].elements["password"].value = obj.password;
-        document.getElementsByTagName("form")[0].submit.click();
-    }, obj);
-    setTimeout(function(){
-        return getLinks(classes);
-    }, 3000);
-}
-
-function getLinks(classes) {
-    console.log("Getting links");
-    var linkHash = page.evaluate(function(classes) {
-        var newList = {};
-        var lst = document.getElementsByTagName("a");
-        var i;
-        classes.forEach(function(classNo){
-            for (i = 0; i < lst.length; i++){
-                var curr = lst[i].innerHTML;
-                if (curr.indexOf(classNo) != -1){
-                    newList[classNo] = lst[i].href
-                    console.log(lst[i].href);
-                    break;
+                function getGrades(i, links) {
+                    console.log("In get grades.");
+                    var limit = Object.keys(links).length;
+                    var id = setTimeout(function() {
+                        if (i != limit) {
+                            getGradesForPage(i, links);
+                        }
+                    }, 1000);
+                    Object.keys(links).forEach(function(key) {
+                        console.log("Key: " + key + " Value: " + links[key]);
+                    });
+                    if (i == limit) {
+                        console.log("i == limit. done.");
+                        /* The hash has been updated at this point
+                           so that the classes (keys) point to the grade
+                           in that class (values). THIS FUNCTION REPLACES THE
+                           LINKS TO THE CLASSES.
+                        */
+                        phInstance.exit(0);
+                        checkWithDB(links);
+                    }
                 }
-            }
-        });
-        return newList;
-    }, classes);
-    return getGrades(0, linkHash);
-}
 
-function getGrades(i, links){
-    // console.log("getGrades method executing.");
-    var limit = Object.keys(links).length;
-    var id = setTimeout(function(){
-        if (i != limit){
-            getGradesForPage(i, links);
-        }
-    }, 1000);
-    Object.keys(links).forEach(function(key){
-        console.log("Key: " + key + " Value: " + links[key]);
-    });
-    if (i == limit){
-        console.log("i == limit. done.");
-        /* The hash has been updated at this point
-           so that the classes (keys) point to the grade
-           in that class (values). THIS FUNCTION REPLACES THE
-           LINKS TO THE CLASSES.
-        */
-        phantom.exit(0);
-        makeChanges(links);
-    }
-}
+                function getGradesForPage(i, links) {
+                    var arr = Object.keys(links);
+                    console.log("Getting grade for page for " + links[arr[i]]);
 
-function getGradesForPage(i, links){
-    var arr = Object.keys(links);
-    page.open(links[arr[i]], function(status){
-        if (status === 'success'){
-            getGradeOnPage(i, links);
-        }
-    });
-}
-
-function getGradeOnPage(i, links){
-    // console.log("getGradeOnPage method executing.");
-    var newLinks = page.evaluate(function(links, i){
-        var arr = document.getElementsByTagName('td');
-        console.log("Got tds, here is the last element we want:");
-        console.log(arr[arr.length - 3].innerHTML);
-        links[Object.keys(links)[i]] = arr[arr.length - 3].innerHTML;
-        return links;
-    }, links, i);
-    links = newLinks
-    getGrades((i + 1), links);
-}
-
-function makeChanges(grades){
-    grades.forEach(function(grade){
-        grades[grade] = parseFloat(grades[grade]);
-    });
-    checkWithDB(grades);
-}
-
-function checkWithDB(grades){
-    var newClasses = {};
-    var needToSendMessage = false;
-    knex('grades').where('id', userToLookup).then(function(storedGrades){
-        grades.forEach(function(classCode){
-            needToSendMessage = needToSendMessage || detectChange(classCode,grades[classCode],storedGrades);
-        });
-    });
-}
-
-function detectChange(classCode, grade, storedArr){
-    storedArr.forEach(function(row){
-        if (row.courseCode === classCode){
-            return row.grade != grade;
+                    sitePage.open(links[arr[i]])
+                    .then(function(status) {
+                        if (status === 'success') {
+                            console.log("getGradeOnPage method executing.");
+                            sitePage.evaluate(function(links, i) {
+                                var arr = document.getElementsByTagName('td');
+                                links[Object.keys(links)[i]] = arr[arr.length - 3].innerHTML;
+                                return links;
+                            }, links, i).then(function(links){
+                                console.log(links);
+                                getGrades((i + 1), links);
+                            });
+                        }
+                    });
+                }
+                function checkWithDB(grades) {
+                    var newClasses = {};
+                    var needToSendMessage = false;
+                    console.log("Checking with DB!");
+                    new Grade({
+                            user_id: userToLookup
+                        })
+                        .fetchAll()
+                        .then(function(gradeRows) {
+                            gradeRows.models.forEach(function(base) {
+                                var currCourse = base.attributes.courseCode;
+                                var savedGrade = base.attributes.grade;
+                                if (savedGrade != parseFloat(grades[currCourse])) {
+                                    console.log("Need to update grade for " + currCourse);
+                                    needToSendMessage = true;
+                                    new Grade({
+                                        id: base.attributes.id,
+                                        user_id: userToLookup,
+                                        courseCode: currCourse,
+                                        grade: parseFloat(grades[currCourse])
+                                    }).save(null, {
+                                        method: "update"
+                                    });
+                                }
+                            });
+                        });
+                }
+            });
         }
     });
-    console.log("We have never stored any info about this user's class");
-    return false;
-}
-
-function execute(user, pw, classes) {
-    openPage(user,pw,classes);
-}
-
-userToLookup = args[4];
-var currentCourses = execute(args[1], args[2], args[3].split(','));
