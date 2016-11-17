@@ -14,7 +14,7 @@ var transporter = nodemailer.createTransport({
  * GET /contact
  */
 exports.signupGet = function(req, res) {
-  res.render('contact', {
+  res.render('signup', {
     title: 'Contact'
   });
 };
@@ -48,7 +48,7 @@ exports.signupPost = function(req, res) {
                 });
             }).then(function(){
                 req.flash('success', { msg: 'Information saved for ' + req.body.email });
-                res.redirect('/contact');
+                res.redirect('/signup');
             });
     });
 };
