@@ -10,19 +10,22 @@ User.fetchAll().then(function(users){
         new Grade({user_id: id})
         .fetchAll()
         .then(function(gradeRows){
-            console.log(stuff.models);
-        })
-            /*
-        var callStr = 'phantomjs ./script.js ' + user.directoryId + ' ' + user.directoryPass + ' ' + user.courses + ' ' + user.id;
-        console.log(callStr);
-        exec(callStr, function(error, stdout, stderr) {
-            console.log('stdout: ', stdout);
-            console.log('stderr: ', stderr);
-            if (error !== null) {
-                console.log('exec error: ', error);
-            }
+            gradeRows.models.forEach(function(base){
+                console.log(base.attributes.courseCode);
+                courses.push(base.attributes.courseCode);
+            });
+        }).then(function(){
+            var callStr = 'phantomjs ./script.js ' + user.get('directoryId') + ' ' + user.get('directoryPass')  + ' ' + courses + ' ' + id;
+            console.log(callStr);
+            exec(callStr, function(error, stdout, stderr) {
+                console.log('stdout: ', stdout);
+                console.log('stderr: ', stderr);
+                if (error !== null) {
+                    console.log('exec error: ', error);
+                }
+            });
         });
-        */
+
     });
 });
 //var h1 = exec.executeForUserWithClasses(creds.username, creds.password, ['216','351']);
