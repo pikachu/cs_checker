@@ -9,6 +9,7 @@ var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 var dotenv = require('dotenv');
 var exphbs = require('express-handlebars');
+var auth = require('./public/js/authentication');
 
 // Load environment variables from .env file
 dotenv.load();
@@ -53,8 +54,14 @@ app.get('/', HomeController.index);
 app.get('/signup', signupController.signupGet);
 app.post('/signup', signupController.signupPost);
 app.get('/login', loginController.loginGet);
-app.get('/login', loginController.loginPost);
+app.post('/login', loginController.loginPost);
 app.get('/logout', logoutController.logoutGet);
+app.get('/profile', auth.requiredAuthentication, function(req, res) {
+    console.log(req.session.user);
+    res.render('profile', {
+      email: req.session.user.email
+    });
+});
 
 // Production error handler
 if (app.get('env') === 'production') {
