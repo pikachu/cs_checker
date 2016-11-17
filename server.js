@@ -15,7 +15,7 @@ dotenv.load();
 
 // Controllers
 var HomeController = require('./controllers/home');
-var signController = require('./controllers/signup');
+var signupController = require('./controllers/signup');
 var loginController = require('./controllers/login');
 var logoutController = require('./controllers/logout');
 
