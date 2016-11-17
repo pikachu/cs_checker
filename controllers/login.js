@@ -1,4 +1,5 @@
 var User = require('../models/user');
+var auth = require('../public/js/authentication');
 
 /**
  * GET /contact
@@ -13,17 +14,12 @@ exports.loginGet = function(req, res) {
  * POST /contact
  */
 exports.loginPost = function(req, res) {
-    var courses = req.body.courses.split(',').map(function(str) {
-        return str.trim();
-    });
-
-    new User({
-        username: req.body.username,
-        password: req.body.password,
-        phone_number: req.body.phoneNumber,
-        courses: courses
-    }).save().then(function(saved) {
-        req.flash('success', { msg: 'Information saved for ' + req.body.username });
-        res.redirect('/contact');
+    auth.authenticate(req.body.email, req.body.password, function(err, user) {
+        if (user) {
+            req.session.regenerate(function() {
+                req.session.user = user;
+                res.redirect('/profile');
+            });
+        }
     });
 };

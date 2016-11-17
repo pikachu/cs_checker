@@ -13,7 +13,7 @@ exports.up = function(knex) {
     .createTable('grades', function(table) {
         table.increments('id').primary();
         table.bigInteger('user_id').references('users.id');
-        table.string('courseCode');
+        table.string('course_code');
         table.float('grade');
     });
 };

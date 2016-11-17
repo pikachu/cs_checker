@@ -29,24 +29,15 @@ function hash(pwd, salt, fn) {
   }
 };
 
-
 function authenticate(name, pass, fn) {
-    User.findOne({
-        username: name
-    },
-
-    function (err, user) {
-        if (user) {
-            if (err) return fn(new Error('cannot find user'));
-            hash(pass, user.salt, function (err, hash) {
+    new User({'email': name}).fetch().then(
+        function (user) {
+            hash(pass, user.get('password_salt'), function (err, hash) {
                 if (err) return fn(err);
-                if (hash == user.hash) return fn(null, user);
+                if (hash.toString('base64') === user.get('password_hash')) return fn(null, user);
                 fn(new Error('invalid password'));
             });
-        } else {
-            return fn(new Error('cannot find user'));
-        }
-    });
+        });
 }
 
 function requiredAuthentication(req, res, next) {
@@ -58,15 +49,17 @@ function requiredAuthentication(req, res, next) {
     }
 }
 
-function userExist(req, res, next) {
-    User.count({
-        username: req.body.username
-    }, function (err, count) {
-        if (count === 0) {
+function userExists(req, res, next) {
+    new User({'email': req.body.email}).fetch().then(function (user) {
+        if (user) {
             next();
         } else {
-            req.session.error = "User Exist"
             res.redirect("/signup");
         }
     });
 }
+
+exports.hash = hash;
+exports.authenticate = authenticate;
+exports.requiredAuthentication = requiredAuthentication;
+exports.userExists = userExists;
