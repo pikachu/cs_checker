@@ -15,10 +15,11 @@ dotenv.load();
 
 // Controllers
 var HomeController = require('./controllers/home');
-var contactController = require('./controllers/contact');
+var signController = require('./controllers/signup');
+var loginController = require('./controllers/login');
+var logoutController = require('./controllers/logout');
 
 var app = express();
-
 
 var hbs = exphbs.create({
   defaultLayout: 'main',
@@ -49,8 +50,11 @@ app.use(flash());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', HomeController.index);
-app.get('/contact', contactController.contactGet);
-app.post('/contact', contactController.contactPost);
+app.get('/signup', signupController.signupGet);
+app.post('/signup', signupController.signupPost);
+app.get('/login', loginController.loginGet);
+app.get('/login', loginController.loginPost);
+app.get('/logout', logoutController.logoutGet);
 
 // Production error handler
 if (app.get('env') === 'production') {

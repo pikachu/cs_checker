@@ -3,15 +3,16 @@ exports.up = function(knex) {
   return knex.schema
     .createTable('users', function(table) {
       table.increments('id').primary();
-      table.string('username');
-      table.string('password');
-      table.string('directoryId');
+      table.specificType('email', 'varchar(255) UNIQUE')
+      table.string('passwordHash');
+      table.string('passwordSalt');
+      table.specificType('directoryId', 'varchar(255) UNIQUE');
       table.string('directoryPass');
-      table.string('email');
-      table.string('phone_number');
+      table.string('phoneNumber');
     })
     .createTable('grades', function(table) {
-        table.bigInteger('id');
+        table.increments('id').primary();
+        table.bigInteger('user_id').references('users.id');
         table.integer('courseCode');
         table.float('grade');
     });
