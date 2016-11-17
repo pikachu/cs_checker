@@ -2,6 +2,8 @@ var page = new WebPage();
 var loadInProgress = false;
 var system = require('system');
 var args = system.args;
+var userToLookup;
+
 
 page.onConsoleMessage = function(msg) {
     console.log(msg);
@@ -80,7 +82,7 @@ function getGrades(i, links){
            LINKS TO THE CLASSES.
         */
         phantom.exit(0);
-        return links;
+        makeChanges(links);
     }
 }
 
@@ -106,8 +108,36 @@ function getGradeOnPage(i, links){
     getGrades((i + 1), links);
 }
 
+function makeChanges(grades){
+    grades.forEach(function(grade){
+        grades[grade] = parseFloat(grades[grade]);
+    });
+    checkWithDB(grades);
+}
+
+function checkWithDB(grades){
+    var newClasses = {};
+    var needToSendMessage = false;
+    knex('grades').where('id', userToLookup).then(function(storedGrades){
+        grades.forEach(function(classCode){
+            needToSendMessage = needToSendMessage || detectChange(classCode,grades[classCode],storedGrades);
+        });
+    });
+}
+
+function detectChange(classCode, grade, storedArr){
+    storedArr.forEach(function(row){
+        if (row.courseCode === classCode){
+            return row.grade != grade;
+        }
+    });
+    console.log("We have never stored any info about this user's class");
+    return false;
+}
+
 function execute(user, pw, classes) {
     openPage(user,pw,classes);
 }
 
-execute(args[1], args[2], args[3].split(','));
+userToLookup = args[4];
+var currentCourses = execute(args[1], args[2], args[3].split(','));
