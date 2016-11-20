@@ -8,7 +8,11 @@ var sitePage;
 
 var username = process.argv[2];
 var password = process.argv[3];
-var classes = process.argv[4].split(',');
+if (process.argv[4] === 'LOGINONLY'){
+    var flag = 'LOGINONLY';
+} else {
+    var classes = process.argv[4].split(',');
+}
 var userToLookup = process.argv[5];
 
 phantom.create()
@@ -41,17 +45,19 @@ phantom.create()
         }, 3000);
 
         function getLinks() {
-            console.log("Getting links for classes " + classes);
             sitePage.evaluate(function(classes) {
                 var newList = {};
                 var lst = document.getElementsByTagName("a");
+                if (document.body.innerHTML.indexOf('Fatal Error') != -1){
+                    // We did not log in
+                    return "ERROR LOGGING IN"
+                }
                 var i;
                 classes.forEach(function(classNo) {
                     for (i = 0; i < lst.length; i++) {
                         var curr = lst[i].innerHTML;
                         if (curr.indexOf(classNo) != -1) {
                             newList[classNo] = lst[i].href
-                            console.log(lst[i].href);
                             break;
                         }
                     }
@@ -59,9 +65,17 @@ phantom.create()
                 return newList;
             }, classes)
             .then(function(result){
+                if (result === "ERROR LOGGING IN"){
+                    console.error(result);
+                    console.log(result);
+                    process.exit();
+                }
+                if (flag && flag === 'LOGINONLY'){
+                    console.log("Successful login.");
+                    process.exit();
+                }
                 console.log(result)
                 getGrades(0, result);
-
                 function getGrades(i, links) {
                     console.log("In get grades.");
                     var limit = Object.keys(links).length;
