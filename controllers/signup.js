@@ -23,15 +23,8 @@ exports.signupPost = function(req, res) {
     });
     var email = req.body.email;
     var password = req.body.password;
-    var callStr = 'node ./script.js ' + req.body.umdusername + ' ' + req.body.umdpass + ' ' + 'LOGINONLY';
-    exec(callStr, function(error, stdout, stderr) {
-        console.log('stderr: ', stderr);
-        if (stderr.indexOf("ERROR LOGGING IN") != -1){
-            req.session.regenerate(function(){
-                req.flash('success', { msg: 'Incorrect login for ' + req.body.umdusername });
-                res.redirect('/signup');
-            });
-        } else {
+    verifyUser(req.body.umdusername, req.body.umdpass, function(shouldContinue){
+        if (shouldContinue){
             auth.hash(password, function (err, salt, hash) {
                 if (err) throw err;
                 var user = new User({
@@ -62,6 +55,20 @@ exports.signupPost = function(req, res) {
                     });
                 });
             });
+        } else {
+            req.session.regenerate(function(){
+                req.flash('success', { msg: 'Incorrect login for ' + req.body.umdusername });
+                res.redirect('/signup');
+            });
         }
     });
 };
+
+function verifyUser(user, pass, callback){
+    var callStr = 'node ./script.js ' + user + ' ' + pass + ' ' + 'LOGINONLY';
+    console.log("Trying to verify user " + user);
+    exec(callStr, function(error, stdout, stderr) {
+        console.log(stderr);
+        callback(stderr.indexOf("ERROR LOGGING IN") == -1);
+    });
+}
