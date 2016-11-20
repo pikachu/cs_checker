@@ -3,6 +3,7 @@ var Grade = require('../models/grade');
 var nodemailer = require('nodemailer');
 var auth = require('../public/js/authentication');
 var exec = require('child_process').exec;
+var CasStrategy = require('passport-cas2').Strategy;
 
 /**
  * GET /contact
@@ -24,9 +25,8 @@ exports.signupPost = function(req, res) {
     var password = req.body.password;
     var callStr = 'node ./script.js ' + req.body.umdusername + ' ' + req.body.umdpass + ' ' + 'LOGINONLY';
     exec(callStr, function(error, stdout, stderr) {
-        console.log('stdout: ', stdout);
-        if (stderr === "ERROR LOGGING IN") {
-            console.log('exec error: ', stderr);
+        console.log('stderr: ', stderr);
+        if (stderr.indexOf("ERROR LOGGING IN") != -1){
             req.session.regenerate(function(){
                 req.flash('success', { msg: 'Incorrect login for ' + req.body.umdusername });
                 res.redirect('/signup');
