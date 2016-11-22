@@ -25,6 +25,7 @@
     "method-override": "^2.3.5",
     "morgan": "^1.7.0",
     "nodemailer": "^2.3.0",
+    "passport-cas2": "0.0.8",
     "pg": "^4.5.1",
     "phantom": "^3.0.3",
     "phantomjs": "^2.1.7",
