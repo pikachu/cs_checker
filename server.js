@@ -19,6 +19,7 @@ var HomeController = require('./controllers/home');
 var signupController = require('./controllers/signup');
 var loginController = require('./controllers/login');
 var logoutController = require('./controllers/logout');
+var profileController = require('./controllers/profile');
 
 var app = express();
 
@@ -56,12 +57,7 @@ app.post('/signup', signupController.signupPost);
 app.get('/login', loginController.loginGet);
 app.post('/login', loginController.loginPost);
 app.get('/logout', logoutController.logoutGet);
-app.get('/profile', auth.requiredAuthentication, function(req, res) {
-    console.log(req.session.user);
-    res.render('profile', {
-      email: req.session.user.email
-    });
-});
+app.get('/profile', auth.requiredAuthentication, profileController.profileGet);
 
 // Production error handler
 if (app.get('env') === 'production') {
