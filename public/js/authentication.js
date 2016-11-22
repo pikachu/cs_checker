@@ -32,11 +32,15 @@ function hash(pwd, salt, fn) {
 function authenticate(name, pass, fn) {
     new User({'email': name}).fetch().then(
         function (user) {
-            hash(pass, user.get('password_salt'), function (err, hash) {
-                if (err) return fn(err);
-                if (hash.toString('base64') === user.get('password_hash')) return fn(null, user);
-                fn(new Error('invalid password'));
-            });
+            if (!user) {
+                fn(new Error('no such user'));
+            } else {
+                hash(pass, user.get('password_salt'), function (err, hash) {
+                    if (err) return fn(err);
+                    if (hash.toString('base64') === user.get('password_hash')) return fn(null, user);
+                    fn(new Error('invalid password'));
+                });
+            }
         });
 }
 

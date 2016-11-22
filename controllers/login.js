@@ -20,6 +20,9 @@ exports.loginPost = function(req, res) {
                 req.session.user = user;
                 res.redirect('/profile');
             });
+        } else {
+            req.flash('error', {msg: err.message});
+            res.redirect('/login');
         }
     });
 };
