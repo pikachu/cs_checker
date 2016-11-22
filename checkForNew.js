@@ -13,7 +13,7 @@ User.fetchAll().then(function(users){
                 courses.push(base.attributes.courseCode);
             });
         }).then(function(){
-            var callStr = 'node ./script.js ' + user.get('directory_id') + ' ' + user.get('directory_pass')  + ' ' + courses + ' ' + id;
+            var callStr = 'node ./script.js ' + user.get('directory_id') + ' ' + user.get('directory_pass')  + ' ' + courses;
             exec(callStr, function(error, stdout, stderr) {
                 console.log('stdout: ', stdout);
                 console.log('stderr: ', stderr);
