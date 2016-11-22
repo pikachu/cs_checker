@@ -3,7 +3,6 @@ var Grade = require('../models/grade');
 var nodemailer = require('nodemailer');
 var auth = require('../public/js/authentication');
 var exec = require('child_process').exec;
-var CasStrategy = require('passport-cas2').Strategy;
 
 /**
  * GET /contact
