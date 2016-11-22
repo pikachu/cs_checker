@@ -1,7 +1,7 @@
 var phantom = require('phantom');
 var User = require('./models/user');
 var Grade = require('./models/grade');
-
+var bookshelf = require('./bookshelf');
 var phInstance;
 var sitePage;
 
@@ -127,32 +127,38 @@ phantom.create()
                         }
                     });
                 }
-                function checkWithDB(grades) {
+
+                function checkWithDB(newGrades) {
                     var newClasses = {};
                     var needToSendMessage = false;
                     new User({directory_id: username}).fetch().then(function(user){
-                        new Grade({
-                                user_id: user.get('id')
-                            })
-                            .fetchAll()
-                            .then(function(gradeRows) {
-                                gradeRows.models.forEach(function(base) {
-                                    var currCourse = base.get('course_code');
-                                    var savedGrade = base.get('grade');
-                                    if (savedGrade != parseFloat(grades[currCourse])) {
-                                        needToSendMessage = true;
-                                        new Grade({
-                                            id: base.attributes.id,
-                                            user_id: user.get('id'),
-                                            course_code: currCourse,
-                                            grade: parseFloat(grades[currCourse])
-                                        }).save(null, {
-                                            method: "update"
-                                        });
-                                    }
-                                });
+                        bookshelf.knex('grades').where('user_id', user.get('id')).then(function(oldGrades) {
+                            oldGrades.forEach(function(base) {
+                                var currCourse = base.course_code;
+                                var savedGrade = base.grade;
+                                console.log(typeof base.id);
+                                console.log(savedGrade);
+                                if (savedGrade != parseFloat(oldGrades[currCourse])) {
+                                    needToSendMessage = true;
+                                    console.log("id: " + parseInt(base.id));
+                                    console.log("user_id: " + user.get('id'));
+                                    console.log("course_code: " + currCourse);
+                                    console.log("grade: " + parseFloat(newGrades[currCourse]));
+                                    new Grade({
+                                        id: parseInt(base.id),
+                                        user_id: user.get('id'),
+                                        course_code: currCourse,
+                                        grade: parseFloat(newGrades[currCourse])
+                                    }).save(null, {
+                                        method: "update"
+                                    });
+                                }
                             });
-                    })
+                        });
+                    });
+                    setTimeout(function(){
+                        process.exit();
+                    }, 5000);
                 }
             });
         }
