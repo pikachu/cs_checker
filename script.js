@@ -7,7 +7,9 @@ var sitePage;
 
 /* Necessary */
 var username = process.argv[2];
-var password = process.argv[3];
+var password;
+var classes = [];
+var flag
 
 /*
  * Flags
@@ -20,17 +22,24 @@ var password = process.argv[3];
  *
  */
 if (process.argv[4] === 'LOGINONLY'){
-    var flag = 'LOGINONLY';
+    flag = 'LOGINONLY';
+    password = process.argv[3];
 } else {
     /*
      * Exit if we have no classes for this user AND are not running any
      * flags.
      */
-    var classes = process.argv[4].split(',');
-    if (classes.length == 0){
-        console.error("NO CLASSES SAVED FOR USER");
-        process.exit();
-    }
+     bookshelf.knex('users').where('directory_id', process.argv[2]).then(function(users) {
+        var user = users[0];
+        password = user.directory_pass;
+        var id = user.id;
+        bookshelf.knex('grades').where('user_id', id).then(function(grades) {
+            grades.forEach(function(grade){
+                classes.push(grade.course_code);
+            });
+        });
+
+    });
 }
 
 phantom.create()

@@ -1,7 +1,8 @@
-var exec = require('child_process').exec;
+var exec = require('child_process').execSync;
 var User = require('./models/user');
 var Grade = require('./models/grade');
 var bookshelf = require('./bookshelf');
+
 new User().fetchAll().then(function(users){
     users.forEach(function(user){
         bookshelf.knex('grades').where('user_id', user.get('id')).then(function(grades) {
@@ -11,7 +12,7 @@ new User().fetchAll().then(function(users){
             });
             return courses;
         }).then(function(courses){
-            var callStr = 'node ./script.js ' + user.get('directory_id') + ' ' + user.get('directory_pass')  + ' ' + courses;
+            var callStr = 'node ./script.js ' + user.get('directory_id');
             console.log(callStr);
             exec(callStr, function(error, stdout, stderr) {
                 console.log('stdout: ', stdout);

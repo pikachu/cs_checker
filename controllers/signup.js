@@ -2,7 +2,7 @@ var User = require('../models/user');
 var Grade = require('../models/grade');
 var nodemailer = require('nodemailer');
 var auth = require('../public/js/authentication');
-var exec = require('child_process').exec;
+var exec = require('child_process').execSync;
 
 /**
  * GET /contact
@@ -36,6 +36,8 @@ exports.signupPost = function(req, res) {
                 }).save().then(function(newUser) {
                     if (err) throw err;
                     var id = newUser.get('id');
+                    // Need to swap this out for functionality in dboard.js
+                    // addNewCourses(id, courses);
                     courses.forEach(function(course) {
                         new Grade({
                             user_id: id,
