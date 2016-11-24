@@ -52,6 +52,7 @@ phantom.create()
                 if (result === "ERROR LOGGING IN"){
                     console.error(result);
                 }
+                phInstance.exit(0);
                 process.exit();
             });
         }

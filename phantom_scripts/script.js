@@ -76,6 +76,7 @@ phantom.create()
             .then(function(result){
                 if (result === "ERROR LOGGING IN"){
                     console.error(result);
+                    phInstance.exit(0);
                     // Need to create flag in DB that will esentially have a "NEEDS TO UPDATE PW"
                     process.exit();
                 }
