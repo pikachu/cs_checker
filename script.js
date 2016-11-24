@@ -9,38 +9,17 @@ var sitePage;
 var username = process.argv[2];
 var password;
 var classes = [];
-var flag
 
-/*
- * Flags
- * Currently, we run script.js like 'node script.js username password FLAG'
- * or 'node script.js username password class,class user_id'
- *
- * Current Flags are:
- * LOGINONLY -  If we want to exit after we login. Used when we create an account
- *              and make sure valid UMD credentials are given.
- *
- */
-if (process.argv[4] === 'LOGINONLY'){
-    flag = 'LOGINONLY';
-    password = process.argv[3];
-} else {
-    /*
-     * Exit if we have no classes for this user AND are not running any
-     * flags.
-     */
-     bookshelf.knex('users').where('directory_id', process.argv[2]).then(function(users) {
-        var user = users[0];
-        password = user.directory_pass;
-        var id = user.id;
-        bookshelf.knex('grades').where('user_id', id).then(function(grades) {
-            grades.forEach(function(grade){
-                classes.push(grade.course_code);
-            });
+bookshelf.knex('users').where('directory_id', process.argv[2]).then(function(users) {
+    var user = users[0];
+    password = user.directory_pass;
+    var id = user.id;
+    bookshelf.knex('grades').where('user_id', id).then(function(grades) {
+        grades.forEach(function(grade){
+            classes.push(grade.course_code);
         });
-
     });
-}
+});
 
 phantom.create()
     .then(function(instance) {
@@ -97,10 +76,7 @@ phantom.create()
             .then(function(result){
                 if (result === "ERROR LOGGING IN"){
                     console.error(result);
-                    process.exit();
-                }
-                if (flag && flag === 'LOGINONLY'){
-                    console.log("Successful login with flag run.");
+                    // Need to create flag in DB that will esentially have a "NEEDS TO UPDATE PW"
                     process.exit();
                 }
                 getGrades(0, result);
