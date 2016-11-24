@@ -1,7 +1,7 @@
 var phantom = require('phantom');
-var User = require('./models/user');
-var Grade = require('./models/grade');
-var bookshelf = require('./bookshelf');
+var User = require('../models/user');
+var Grade = require('../models/grade');
+var bookshelf = require('../bookshelf');
 var phInstance;
 var sitePage;
 

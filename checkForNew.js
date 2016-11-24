@@ -12,7 +12,7 @@ new User().fetchAll().then(function(users){
             });
             return courses;
         }).then(function(courses){
-            var callStr = 'node ./script.js ' + user.get('directory_id');
+            var callStr = 'node ./phantom_scripts/script.js ' + user.get('directory_id');
             console.log(callStr);
             exec(callStr, function(error, stdout, stderr) {
                 console.log('stdout: ', stdout);

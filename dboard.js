@@ -1,6 +1,7 @@
 var User = require('./models/user');
 var Grade = require('./models/grade');
 var bookshelf = require('./bookshelf');
+var execSync = require('child_process').execSync;
 
 /*
  * newCourses is an array of new courses that we have no information about, but
@@ -58,9 +59,18 @@ function detectDiffCourses(user_id, course_string){
     });
 }
 
-// isCourseValidForUser
-// This needs to be implemented to make sure a user even has a course on their dashboard
-
+function areCoursesValidForUser(user_id, course_string){
+    bookshelf.knex('users').where(id, user_id).then(function(results){
+        var user = results[0].directory_id;
+        var callStr = "node ./phantom_scripts/testClasses.js " + user + ' ' + course_string;
+        exec(callStr, function(error, stdout, stderr) {
+            if (stderr.indexOf('failure') != -1) {
+                return true;
+            }
+            return false;
+        });
+    });
+}
 
 module.exports = {
     addCourses: addCourses,

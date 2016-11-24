@@ -66,7 +66,7 @@ exports.signupPost = function(req, res) {
 };
 
 function verifyUser(user, pass, callback){
-    var callStr = 'node ./testLogin.js ' + user + ' ' + pass;
+    var callStr = 'node ./phantom_scripts/testLogin.js ' + user + ' ' + pass;
     console.log("Trying to verify user " + user);
     exec(callStr, function(error, stdout, stderr) {
         console.log(stderr);
