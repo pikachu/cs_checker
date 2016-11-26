@@ -1,19 +1,19 @@
-var exec = require('child_process').exec;
+var exec = require('child_process').execSync;
 var User = require('./models/user');
 var Grade = require('./models/grade');
+var bookshelf = require('./bookshelf');
 
-User.fetchAll().then(function(users){
+new User().fetchAll().then(function(users){
     users.forEach(function(user){
-        var courses = [];
-        var id = user.get('id');
-        new Grade({user_id: id})
-        .fetchAll()
-        .then(function(gradeRows){
-            gradeRows.models.forEach(function(base){
-                courses.push(base.attributes.courseCode);
+        bookshelf.knex('grades').where('user_id', user.get('id')).then(function(grades) {
+            var courses = [];
+            grades.forEach(function(base){
+                courses.push(base.course_code);
             });
-        }).then(function(){
-            var callStr = 'node ./script.js ' + user.get('directory_id') + ' ' + user.get('directory_pass')  + ' ' + courses + ' ' + id;
+            return courses;
+        }).then(function(courses){
+            var callStr = 'node ./phantom_scripts/script.js ' + user.get('directory_id');
+            console.log(callStr);
             exec(callStr, function(error, stdout, stderr) {
                 console.log('stdout: ', stdout);
                 console.log('stderr: ', stderr);
@@ -22,7 +22,5 @@ User.fetchAll().then(function(users){
                 }
             });
         });
-
     });
 });
-//var h1 = exec.executeForUserWithClasses(creds.username, creds.password, ['216','351']);
