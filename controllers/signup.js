@@ -2,6 +2,7 @@ var User = require('../models/user');
 var Grade = require('../models/grade');
 var nodemailer = require('nodemailer');
 var auth = require('../public/js/authentication');
+var crypt = require('../public/js/encryption');
 var exec = require('child_process').execSync;
 
 /**
@@ -32,7 +33,7 @@ exports.signupPost = function(req, res) {
                         password_hash: hash.toString('base64'),
                         phone_number: req.body.phoneNumber,
                         directory_id: req.body.umdusername,
-                        directory_pass: auth.encrypt(req.body.umdpass)
+                        directory_pass: crypt.encrypt(req.body.umdpass)
                     }).save().then(function(newUser) {
                         if (err) throw err;
                         var id = newUser.get('id');
