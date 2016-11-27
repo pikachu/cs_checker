@@ -3,6 +3,7 @@ var User = require('../models/user');
 var Grade = require('../models/grade');
 var bookshelf = require('../bookshelf');
 var sendMessage = require('../email').sendMessage;
+
 var phInstance;
 var sitePage;
 

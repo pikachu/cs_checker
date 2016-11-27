@@ -3,10 +3,6 @@ var phantom = require('phantom');
 function testValidLogin(username, password, callback){
     var phInstance;
     var sitePage;
-    var retVal;
-    setTimeout(function(){
-        callback(retVal);
-    }, 5000);
     phantom.create()
         .then(function(instance) {
             /* Create page */
