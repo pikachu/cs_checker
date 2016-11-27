@@ -1,4 +1,5 @@
 var crypto = require('crypto');
+var db = require('./db');
 var User = require('../../models/user');
 var len = 128;
 var iterations = 12000;
@@ -29,19 +30,19 @@ function hash(pwd, salt, fn) {
   }
 };
 
-function authenticate(name, pass, fn) {
-    new User({'email': name}).fetch().then(
+function authenticate(email, pass, fn) {
+    db.getUser(email).then(
         function (user) {
             if (!user) {
                 fn(new Error('no such user'));
             } else {
-                hash(pass, user.get('password_salt'), function (err, hash) {
+                hash(pass, user.password_salt, function (err, hash) {
                     if (err) return fn(err);
-                    if (hash.toString('base64') === user.get('password_hash')) return fn(null, user);
+                    if (hash.toString('base64') === user.password_hash) return fn(null, user);
                     fn(new Error('invalid password'));
                 });
             }
-        });
+    });
 }
 
 function requiredAuthentication(req, res, next) {
@@ -54,12 +55,13 @@ function requiredAuthentication(req, res, next) {
 }
 
 function userExists(req, res, next) {
-    new User({'email': req.body.email}).fetch().then(function (user) {
-        if (user) {
-            next();
-        } else {
-            res.redirect("/signup");
-        }
+    db.getUser(req.body.email).then(
+        function (user) {
+            if (user) {
+                next();
+            } else {
+                res.redirect("/signup");
+            }
     });
 }
 
