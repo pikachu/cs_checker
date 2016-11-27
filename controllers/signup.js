@@ -3,7 +3,7 @@ var Grade = require('../models/grade');
 var nodemailer = require('nodemailer');
 var auth = require('../public/js/authentication');
 var crypt = require('../public/js/encryption');
-var exec = require('child_process').execSync;
+var testValidLogin = require('../phantom_scripts/testLogin').testValidLogin;
 
 /**
  * GET /contact
@@ -23,7 +23,7 @@ exports.signupPost = function(req, res) {
     });
     var email = req.body.email;
     var password = req.body.password;
-    verifyUser(req.body.umdusername, req.body.umdpass, function(shouldContinue){
+    testValidLogin(req.body.umdusername, req.body.umdpass, function(shouldContinue){
         if (shouldContinue){
             auth.hash(password, function (err, salt, hash) {
                 if (err) throw err;
@@ -55,7 +55,7 @@ exports.signupPost = function(req, res) {
                         });
                     });
                 });
-            });
+            
         } else {
             req.session.regenerate(function(){
                 req.flash('success', { msg: 'Incorrect login for ' + req.body.umdusername });
@@ -64,16 +64,3 @@ exports.signupPost = function(req, res) {
         }
     });
 };
-
-function verifyUser(user, pass, callback){
-    var callStr = 'node testLogin.js ' + user + ' ' + pass;
-    console.log("Trying to verify user " + user);
-
-    callback(true);
-    // exec(callStr, function(error, stdout, stderr) {
-    //     console.log(stderr);
-    //     callback(stderr.indexOf("ERROR LOGGING IN") == -1);
-    // });
-}
-
-verifyUser('iparikh', 'Helloworld12', null);
