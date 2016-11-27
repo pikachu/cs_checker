@@ -1,17 +1,16 @@
 var phantom = require('phantom');
-var phInstance;
-var sitePage;
 var bookshelf = require('../bookshelf');
-//var getUser = require('../controllers/utils/db').getUser;
-/* Necessary */
-var username = process.argv[2];
-var password;
+var getUser = require('../controllers/utils/db').getUser;
 
-function testValidClasses(username, classes_str, callback){
+function testValidClasses(user_id, classes_str, callback){
     var classes = classes_str.split(",");
-    bookshelf.knex('users').where('id', username).then(function(users) {
-        password = users[0].directory_pass;
-        username = users[0].directory_id;
+    var username;
+    var password;
+    var phInstance;
+    var sitePage;
+    getUser(user_id).then(function(user){
+        username = user.directory_id;
+        password = user.directory_pass;
     }).then(function(){
         phantom.create()
             .then(function(instance) {
@@ -27,11 +26,11 @@ function testValidClasses(username, classes_str, callback){
                 return page.open("https://grades.cs.umd.edu/classWeb/login.cgi");
             })
             .then(function(status) {
-                console.log("Status: " + status);
                 var obj = {
                     username: username,
                     password: password
                 };
+                console.log(obj);
                 /* Clicks on sign-in */
                 return sitePage.evaluate(function(obj) {
                     var arr = document.getElementsByTagName("form");

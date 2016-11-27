@@ -62,13 +62,9 @@ function detectDiffCourses(user_id, course_string){
 /* Takes an id as the first input */
 function areCoursesValidForUser(user_id, course_string){
     console.log("Checking if courses are valid for user");
-    bookshelf.knex('users').where('id', user_id).then(function(results){
-        var user = results[0].directory_id;
-        console.log(user);
-        testValidClasses(user_id, course_string, function(res){
-            console.log(res);
-            return res;
-        });
+    testValidClasses(user_id, course_string, function(res){
+        console.log(res);
+        return res;
     });
 }
 
