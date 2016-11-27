@@ -5,9 +5,6 @@ var bookshelf = require('../bookshelf');
 var sendMessage = require('../email').sendMessage;
 var getUser = require('../controllers/utils/db').getUser;
 
-
-doImportantThings('iparikh');
-
 function doImportantThings(username){
     var courses = [];
     var password;
@@ -158,3 +155,7 @@ function doPhantom(username, password, courses){
             }
         });
 }
+
+module.exports = {
+    updateUser: doImportantThings
+};
