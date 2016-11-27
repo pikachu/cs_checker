@@ -2,7 +2,7 @@ const phantom = require('phantom');
 const User = require('../models/user');
 const Grade = require('../models/grade');
 const bookshelf = require('../bookshelf');
-const sendMessage = require('../email').sendMessage;
+const sendMessage = require('./utils/email').sendMessage;
 const getUser = require('../controllers/utils/db').getUser;
 
 function doPhantom(username, password, courses) {

@@ -1,0 +1,6 @@
+DB_HOST='localhost'
+DB_USER='nomad'
+DB_PASSWORD='password'
+DB_NAME='cs_checker'
+
+SESSION_SECRET='123'
