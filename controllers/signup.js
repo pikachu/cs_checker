@@ -26,33 +26,32 @@ exports.signupPost = function(req, res) {
         if (shouldContinue){
             auth.hash(password, function (err, salt, hash) {
                 if (err) throw err;
-                var user = new User({
-                    email: email,
-                    password_salt: salt,
-                    password_hash: hash.toString('base64'),
-                    phone_number: req.body.phoneNumber,
-                    directory_id: req.body.umdusername,
-                    directory_pass: req.body.umdpass
-                }).save().then(function(newUser) {
-                    if (err) throw err;
-                    var id = newUser.get('id');
-                    // Need to swap this out for functionality in dboard.js
-                    // addNewCourses(id, courses);
-                    courses.forEach(function(course) {
-                        new Grade({
-                            user_id: id,
-                            course_code: course,
-                            grade: 0.0
-                        }).save();
-                    });
-                    auth.authenticate(newUser.get('email'), password, function(err, user){
-                        if(user){
-                            req.session.regenerate(function(){
-                                req.session.user = user;
-                                req.flash('success', { msg: 'Information saved for ' + req.body.email });
-                                res.redirect('/signup');
-                            });
-                        }
+                    var user = new User({
+                        email: email,
+                        password_salt: salt,
+                        password_hash: hash.toString('base64'),
+                        phone_number: req.body.phoneNumber,
+                        directory_id: req.body.umdusername,
+                        directory_pass: auth.encrypt(req.body.umdpass)
+                    }).save().then(function(newUser) {
+                        if (err) throw err;
+                        var id = newUser.get('id');
+                        courses.forEach(function(course) {
+                            new Grade({
+                                user_id: id,
+                                course_code: course,
+                                grade: 0.0
+                            }).save();
+                        });
+                        auth.authenticate(newUser.get('email'), password, function(err, user){
+                            if(user){
+                                req.session.regenerate(function(){
+                                    req.session.user = user;
+                                    req.flash('success', { msg: 'Information saved for ' + req.body.email });
+                                    res.redirect('/profile');
+                                });
+                            }
+                        });
                     });
                 });
             });
@@ -68,16 +67,12 @@ exports.signupPost = function(req, res) {
 function verifyUser(user, pass, callback){
     var callStr = 'node testLogin.js ' + user + ' ' + pass;
     console.log("Trying to verify user " + user);
-    exec('pwd', function(error, stdout, stderr) {
-        console.log(stdout);
-      // work with result
-    });
-    /*
-    exec(callStr, {cwd: '../phantom_scripts/'}, function(error, stdout, stderr) {
-        console.log(stderr);
-        callback(stderr.indexOf("ERROR LOGGING IN") == -1);
-    });
-    */
+
+    callback(true);
+    // exec(callStr, function(error, stdout, stderr) {
+    //     console.log(stderr);
+    //     callback(stderr.indexOf("ERROR LOGGING IN") == -1);
+    // });
 }
 
 verifyUser('iparikh', 'Helloworld12', null);
