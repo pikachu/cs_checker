@@ -1,0 +1,119 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/nodejs', '/usr/bin/npm', 'install', '-g', 'n' ]
+2 info using npm@3.5.2
+3 info using node@v4.2.6
+4 silly loadCurrentTree Starting
+5 silly install loadCurrentTree
+6 silly install readGlobalPackageData
+7 silly fetchPackageMetaData n
+8 silly fetchNamedPackageData n
+9 silly mapToRegistry name n
+10 silly mapToRegistry using default registry
+11 silly mapToRegistry registry https://registry.npmjs.org/
+12 silly mapToRegistry uri https://registry.npmjs.org/n
+13 verbose request uri https://registry.npmjs.org/n
+14 verbose request no auth needed
+15 info attempt registry request try #1 at 1:03:41 AM
+16 verbose request id e9dbb28351c2627a
+17 verbose etag "582f5e59-f9c4"
+18 http request GET https://registry.npmjs.org/n
+19 http 304 https://registry.npmjs.org/n
+20 verbose headers { date: 'Sun, 27 Nov 2016 06:03:41 GMT',
+20 verbose headers   via: '1.1 varnish',
+20 verbose headers   'cache-control': 'max-age=300',
+20 verbose headers   etag: '"582f5e59-f9c4"',
+20 verbose headers   age: '221',
+20 verbose headers   connection: 'keep-alive',
+20 verbose headers   'x-served-by': 'cache-iad2629-IAD',
+20 verbose headers   'x-cache': 'HIT',
+20 verbose headers   'x-cache-hits': '1',
+20 verbose headers   'x-timer': 'S1480226621.415655,VS0,VE0',
+20 verbose headers   vary: 'Accept-Encoding' }
+21 silly get cb [ 304,
+21 silly get   { date: 'Sun, 27 Nov 2016 06:03:41 GMT',
+21 silly get     via: '1.1 varnish',
+21 silly get     'cache-control': 'max-age=300',
+21 silly get     etag: '"582f5e59-f9c4"',
+21 silly get     age: '221',
+21 silly get     connection: 'keep-alive',
+21 silly get     'x-served-by': 'cache-iad2629-IAD',
+21 silly get     'x-cache': 'HIT',
+21 silly get     'x-cache-hits': '1',
+21 silly get     'x-timer': 'S1480226621.415655,VS0,VE0',
+21 silly get     vary: 'Accept-Encoding' } ]
+22 verbose etag https://registry.npmjs.org/n from cache
+23 verbose get saving n to /home/nomad/.npm/registry.npmjs.org/n/.cache.json
+24 silly install normalizeTree
+25 silly loadCurrentTree Finishing
+26 silly loadIdealTree Starting
+27 silly install loadIdealTree
+28 silly cloneCurrentTree Starting
+29 silly install cloneCurrentTreeToIdealTree
+30 silly cloneCurrentTree Finishing
+31 silly loadShrinkwrap Starting
+32 silly install loadShrinkwrap
+33 silly loadShrinkwrap Finishing
+34 silly loadAllDepsIntoIdealTree Starting
+35 silly install loadAllDepsIntoIdealTree
+36 silly resolveWithNewModule n@2.1.4 checking installable status
+37 silly cache add args [ 'n', null ]
+38 verbose cache add spec n
+39 silly cache add parsed spec Result {
+39 silly cache add   raw: 'n',
+39 silly cache add   scope: null,
+39 silly cache add   name: 'n',
+39 silly cache add   rawSpec: '',
+39 silly cache add   spec: 'latest',
+39 silly cache add   type: 'tag' }
+40 silly addNamed n@latest
+41 verbose addNamed "latest" is being treated as a dist-tag for n
+42 info addNameTag [ 'n', 'latest' ]
+43 silly mapToRegistry name n
+44 silly mapToRegistry using default registry
+45 silly mapToRegistry registry https://registry.npmjs.org/
+46 silly mapToRegistry uri https://registry.npmjs.org/n
+47 verbose addNameTag registry:https://registry.npmjs.org/n not in flight; fetching
+48 verbose get https://registry.npmjs.org/n not expired, no request
+49 silly addNameTag next cb for n with tag latest
+50 silly addNamed n@2.1.4
+51 verbose addNamed "2.1.4" is a plain semver version for n
+52 silly cache afterAdd n@2.1.4
+53 verbose afterAdd /home/nomad/.npm/n/2.1.4/package/package.json not in flight; writing
+54 verbose afterAdd /home/nomad/.npm/n/2.1.4/package/package.json written
+55 silly loadAllDepsIntoIdealTree Finishing
+56 silly idealTree:prePrune lib
+56 silly idealTree:prePrune └── n@2.1.4
+57 silly loadIdealTree Finishing
+58 silly currentTree lib
+58 silly currentTree └── n@2.1.4
+59 silly idealTree lib
+59 silly idealTree └── n@2.1.4
+60 silly generateActionsToTake Starting
+61 silly install generateActionsToTake
+62 warn checkPermissions Missing write access to /usr/local/lib/node_modules/n
+63 warn checkPermissions Missing write access to /usr/local/lib/node_modules
+64 silly rollbackFailedOptional Starting
+65 silly rollbackFailedOptional Finishing
+66 silly runTopLevelLifecycles Starting
+67 silly runTopLevelLifecycles Finishing
+68 silly install printInstalled
+69 verbose stack Error: EACCES: permission denied, access '/usr/local/lib/node_modules/n'
+69 verbose stack     at Error (native)
+70 verbose cwd /home/nomad/Documents/cs_checker
+71 error Linux 4.4.0-21-generic
+72 error argv "/usr/bin/nodejs" "/usr/bin/npm" "install" "-g" "n"
+73 error node v4.2.6
+74 error npm  v3.5.2
+75 error path /usr/local/lib/node_modules/n
+76 error code EACCES
+77 error errno -13
+78 error syscall access
+79 error Error: EACCES: permission denied, access '/usr/local/lib/node_modules/n'
+79 error     at Error (native)
+79 error  { [Error: EACCES: permission denied, access '/usr/local/lib/node_modules/n']
+79 error   errno: -13,
+79 error   code: 'EACCES',
+79 error   syscall: 'access',
+79 error   path: '/usr/local/lib/node_modules/n' }
+80 error Please try running this command again as root/Administrator.
+81 verbose exit [ -13, true ]

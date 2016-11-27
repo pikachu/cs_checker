@@ -1,3 +1,17 @@
 <div class="container">
   <h3>Hello {{email}}</h3>
+  <form action="http://localhost:3000/profile" method="post">
+    <b>Cuurent Email:</b> {{email}}<br><br>
+    <b>University ID:</b> {{directory_id}}<br><br>
+    Update UID: <input type="text" name="newUMDID"><br>
+    Update University Password: <input type="text" name="newUMDPass">
+    <br><br>
+    <b>Current Courses: </b><input type="text" value="{{classes}}" name="coursesToChange"><br><br>
+	<input type="submit" value="SaveChanges">
+  </form>
+  <br>
+  <form action="http://localhost:3000/logout" method="get">
+      <input type="submit" value="LogOut">
+  </form>
+  <p>{{successful_changes}}</p>
 </div>

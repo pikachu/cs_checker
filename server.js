@@ -52,6 +52,7 @@ app.get('/login', loginController.loginGet);
 app.post('/login', loginController.loginPost);
 app.get('/logout', logoutController.logoutGet);
 app.get('/profile', auth.requiredAuthentication, profileController.profileGet);
+app.post('/profile', profileController.updateProfile);
 
 // Production error handler
 if (app.get('env') === 'production') {

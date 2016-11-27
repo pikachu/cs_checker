@@ -67,4 +67,4 @@ function areCoursesValidForUser(userId, courseString) {
     });
 }
 
-module.exports = { addCourses, delCourses, detectDiffCourses, areCoursesValidForUser };
+module.exports = { addCourses, delCourses, changeCourses: detectDiffCourses, areCoursesValidForUser };
