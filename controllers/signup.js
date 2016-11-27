@@ -1,8 +1,9 @@
-const User = require('../models/user');
 const Grade = require('../models/grade');
 const auth = require('./utils/authentication');
 const crypt = require('./utils/encryption');
 const testValidLogin = require('../phantom_scripts/testLogin').testValidLogin;
+const db = require('./utils/db');
+const knex = require('../config/knex.js');
 
 /**
  * GET /contact
@@ -25,16 +26,16 @@ exports.signupPost = (req, res) => {
         if (shouldContinue) {
             auth.hash(password, (err, salt, hash) => {
                 if (err) throw err;
-                new User({
+                db.createUser({
                     email,
-                    password_salt: salt,
+                    password_salt: salt.toString('base64'),
                     password_hash: hash.toString('base64'),
                     phone_number: req.body.phoneNumber,
                     directory_id: req.body.umdusername,
                     directory_pass: crypt.encrypt(req.body.umdpass)
-                }).save().then(newUser => {
+                }).then(newUser => {
                     if (err) throw err;
-                    const id = newUser.get('id');
+                    const id = newUser.id;
                     courses.forEach(course =>
                         new Grade({
                             user_id: id,
@@ -42,7 +43,8 @@ exports.signupPost = (req, res) => {
                             grade: 0.0
                         }).save()
                     );
-                    auth.authenticate(newUser.get('email'), password, (err2, user) => {
+                    auth.authenticate(newUser.email, password, (err2, user) => {
+                        if (err2) throw err2;
                         if (user) {
                             req.session.regenerate(() => {
                                 req.session.user = user;
