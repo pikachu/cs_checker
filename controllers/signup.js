@@ -1,10 +1,9 @@
 var User = require('../models/user');
 var Grade = require('../models/grade');
-var bookshelf = require('../bookshelf');
 var nodemailer = require('nodemailer');
 var auth = require('./utils/authentication');
 var crypt = require('./utils/encryption');
-var exec = require('child_process').execSync;
+var testValidLogin = require('../phantom_scripts/testLogin').testValidLogin;
 
 /**
  * GET /contact
@@ -24,15 +23,10 @@ exports.signupPost = function(req, res) {
     });
     var email = req.body.email;
     var password = req.body.password;
-    bookshelf.knex('users').where('email', email).orWhere('directory_id', req.body.umdusername).then(function(user) {
-        if (user.length > 0) {
-            req.flash('error', {msg: 'That user already exists!'});
-            res.redirect('/signup');
-        }
-        verifyUser(req.body.umdusername, req.body.umdpass, function(shouldContinue){
-            if (shouldContinue){
-                auth.hash(password, function (err, salt, hash) {
-                    if (err) throw err;
+    testValidLogin(req.body.umdusername, req.body.umdpass, function(shouldContinue){
+        if (shouldContinue){
+            auth.hash(password, function (err, salt, hash) {
+                if (err) throw err;
                     var user = new User({
                         email: email,
                         password_salt: salt,
@@ -61,22 +55,12 @@ exports.signupPost = function(req, res) {
                         });
                     });
                 });
-            } else {
-                req.session.regenerate(function(){
-                    req.flash('success', { msg: 'Incorrect login for ' + req.body.umdusername });
-                    res.redirect('/signup');
-                });
-            }
-        });
+
+        } else {
+            req.session.regenerate(function(){
+                req.flash('success', { msg: 'Incorrect login for ' + req.body.umdusername });
+                res.redirect('/signup');
+            });
+        }
     });
 };
-
-function verifyUser(user, pass, callback){
-    var callStr = 'node ./phantom_scripts/testLogin.js ' + user + ' ' + pass;
-    console.log("Trying to verify user " + user);
-    callback(true);
-    // exec(callStr, function(error, stdout, stderr) {
-    //     console.log(stderr);
-    //     callback(stderr.indexOf("ERROR LOGGING IN") == -1);
-    // });
-}
