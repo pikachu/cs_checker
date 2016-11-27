@@ -1,6 +1,6 @@
 var User = require('../models/user');
-var auth = require('../public/js/authentication');
-var db = require('../public/js/db');
+var auth = require('./utils/authentication');
+var db = require('./utils/db');
 
 /**
  * GET /contact

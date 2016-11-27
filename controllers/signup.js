@@ -2,8 +2,8 @@ var User = require('../models/user');
 var Grade = require('../models/grade');
 var bookshelf = require('../bookshelf');
 var nodemailer = require('nodemailer');
-var auth = require('../public/js/authentication');
-var crypt = require('../public/js/encryption');
+var auth = require('./utils/authentication');
+var crypt = require('./utils/encryption');
 var exec = require('child_process').execSync;
 
 /**

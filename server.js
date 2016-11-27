@@ -9,7 +9,7 @@ var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 var dotenv = require('dotenv');
 var exphbs = require('express-handlebars');
-var auth = require('./public/js/authentication');
+var auth = require('./controllers/utils/authentication');
 
 // Load environment variables from .env file
 dotenv.load();
