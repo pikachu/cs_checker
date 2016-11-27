@@ -21,10 +21,9 @@ function hash(pwd, salt, fn) {
         fn = salt;
         crypto.randomBytes(len, (err, newSalt) => {
             if (err) return fn(err);
-            newSalt = newSalt.toString('base64');
-            crypto.pbkdf2(pwd, newSalt, iterations, len, (err2, hashCode) => {
+            crypto.pbkdf2(pwd, newSalt.toString('base64'), iterations, len, (err2, hashCode) => {
                 if (err2) return fn(err2);
-                fn(null, salt, hashCode);
+                fn(null, newSalt, hashCode);
             });
         });
     }
