@@ -12,3 +12,4 @@ exports.getUser = userInfo => {
 };
 
 exports.createUser = userInfo => knex('users').insert(userInfo).returning('*').then(users => users[0]);
+exports.createGrade = gradeInfo => knex('grades').insert(gradeInfo).returning('*').then(grades => grades[0]);
