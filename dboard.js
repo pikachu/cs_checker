@@ -31,7 +31,7 @@ function delCourses(userId, coursesToDel) {
 }
 
 // detectDiffCourses
-function detectDiffCourses(userId, courseString) {
+function detectDiffCourses(userId, courseString, callback) {
     const newCourses = courseString.split(',');
     const oldCourses = [];
     bookshelf.knex('grades').where('user_id', userId).then(grades => {
@@ -53,18 +53,34 @@ function detectDiffCourses(userId, courseString) {
                 del.push(oldCourse);
             }
         });
-        delCourses(userId, del);
-        addCourses(userId, add);
+        delCourses(userId, del).then(() => addCourses(userId, add))
+        .then(() => {
+            callback();
+        });
     });
 }
 
 /* Takes an id as the first input */
-function areCoursesValidForUser(userId, courseString) {
+function areCoursesValidForUser(userId, courseString, callback) {
     console.log('Checking if courses are valid for user');
     testValidClasses(userId, courseString, res => {
-        console.log(res);
-        return res;
+        callback(res);
     });
 }
 
-module.exports = { addCourses, delCourses, changeCourses: detectDiffCourses, areCoursesValidForUser };
+function getCoursesAsArray(userId, callback) {
+    const arr = [];
+    bookshelf.knex('grades').where('user_id', userId).then(grades => {
+        grades.forEach(grade => {
+            arr.push(grade.course_code);
+        });
+        callback(arr);
+    });
+}
+
+module.exports = { addCourses,
+    delCourses,
+    detectDiffCourses,
+    areCoursesValidForUser,
+    getCoursesAsArray
+};
