@@ -1,10 +1,7 @@
-var User = require('../models/user');
-
 /**
  * GET /logout
  */
-exports.profileGet = function(req, res) {
+exports.profileGet = (req, res) =>
     res.render('profile', {
-      email: req.session.user.email
+        email: req.session.user.email
     });
-};

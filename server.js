@@ -1,41 +1,35 @@
-var express = require('express');
-var path = require('path');
-var logger = require('morgan');
-var compression = require('compression');
-var methodOverride = require('method-override');
-var session = require('express-session');
-var flash = require('express-flash');
-var bodyParser = require('body-parser');
-var expressValidator = require('express-validator');
-var dotenv = require('dotenv');
-var exphbs = require('express-handlebars');
-var auth = require('./controllers/utils/authentication');
+/* eslint no-console: ["error", { allow: ["warn", "error", "log"] }] */
+
+const express = require('express');
+const path = require('path');
+const logger = require('morgan');
+const compression = require('compression');
+const methodOverride = require('method-override');
+const session = require('express-session');
+const flash = require('express-flash');
+const bodyParser = require('body-parser');
+const expressValidator = require('express-validator');
+const dotenv = require('dotenv');
+const exphbs = require('express-handlebars');
+const auth = require('./controllers/utils/authentication');
 
 // Load environment variables from .env file
 dotenv.load();
 
 // Controllers
-var HomeController = require('./controllers/home');
-var signupController = require('./controllers/signup');
-var loginController = require('./controllers/login');
-var logoutController = require('./controllers/logout');
-var profileController = require('./controllers/profile');
+const HomeController = require('./controllers/home');
+const signupController = require('./controllers/signup');
+const loginController = require('./controllers/login');
+const logoutController = require('./controllers/logout');
+const profileController = require('./controllers/profile');
 
-var app = express();
-
-var hbs = exphbs.create({
-  defaultLayout: 'main',
-  helpers: {
-    ifeq: function(a, b, options) {
-      if (a === b) {
-        return options.fn(this);
-      }
-      return options.inverse(this);
+const app = express();
+const hbs = exphbs.create({
+    defaultLayout: 'main',
+    helpers: {
+        ifeq: (a, b, options) => (a === b ? options.fn(this) : options.inverse(this))
     },
-    toJSON : function(object) {
-      return JSON.stringify(object);
-    }
-  }
+    toJSON: object => JSON.stringify(object)
 });
 
 app.engine('handlebars', hbs.engine);
@@ -61,14 +55,14 @@ app.get('/profile', auth.requiredAuthentication, profileController.profileGet);
 
 // Production error handler
 if (app.get('env') === 'production') {
-  app.use(function(err, req, res, next) {
-    console.error(err.stack);
-    res.sendStatus(err.status || 500);
-  });
+    app.use((err, req, res) => {
+        console.error(err.stack);
+        res.sendStatus(err.status || 500);
+    });
 }
 
-app.listen(app.get('port'), function() {
-  console.log('Express server listening on port ' + app.get('port'));
+app.listen(app.get('port'), () => {
+    console.log(`Express server listening on port ${app.get('port')}`);
 });
 
 module.exports = app;
