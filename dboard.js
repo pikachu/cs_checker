@@ -6,13 +6,13 @@ const testValidClasses = require('./phantom_scripts/testClasses').testValidClass
  * newCourses is an array of new courses that we have no information about, but
  * the user wants to monitor them.
  */
-function addCourses(userId, newCourses) {
+function addCourses(userId, newCourses, callback) {
     newCourses.forEach(courseCode => {
         new Grade({
             user_id: userId,
             course_code: courseCode,
             grade: 0.0
-        }).save();
+        }).save().then(() => callback());
     });
 }
 
@@ -20,13 +20,13 @@ function addCourses(userId, newCourses) {
  * coursesToDel are courses that the user has previously tracked, but has removed
  * from their desired "to track" list.
  */
-function delCourses(userId, coursesToDel) {
+function delCourses(userId, coursesToDel, callback) {
     coursesToDel.forEach(course => {
         console.log("Deleting course " + course);
         bookshelf.knex('grades').where({
             course_code: course,
             user_id: userId
-        }).del().then();
+        }).del().then(() => callback());
     });
 }
 
@@ -53,9 +53,10 @@ function detectDiffCourses(userId, courseString, callback) {
                 del.push(oldCourse);
             }
         });
-        delCourses(userId, del).then(() => addCourses(userId, add))
-        .then(() => {
-            callback();
+        delCourses(userId, del, () => {
+            addCourses(userId, add, () => {
+                callback();
+            });
         });
     });
 }
