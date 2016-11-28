@@ -53,11 +53,22 @@ function detectDiffCourses(userId, courseString, callback) {
                 del.push(oldCourse);
             }
         });
-        delCourses(userId, del, () => {
-            addCourses(userId, add, () => {
-                callback();
-            });
+        console.log("about to make the changes now.");
+        del.forEach(course => {
+            console.log("Deleting course " + course);
+            bookshelf.knex('grades').where({
+                course_code: course,
+                user_id: userId
+            }).del().then(() => callback());
         });
+        add.forEach(courseCode => {
+            new Grade({
+                user_id: userId,
+                course_code: courseCode,
+                grade: 0.0
+            }).save().then(() => callback());
+        });
+
     });
 }
 
