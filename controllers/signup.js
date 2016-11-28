@@ -1,9 +1,7 @@
-const Grade = require('../models/grade');
 const auth = require('./utils/authentication');
 const crypt = require('./utils/encryption');
 const testValidLogin = require('../phantom_scripts/testLogin').testValidLogin;
 const db = require('./utils/db');
-const knex = require('../config/knex.js');
 
 /**
  * GET /contact
@@ -37,11 +35,11 @@ exports.signupPost = (req, res) => {
                     if (err) throw err;
                     const id = newUser.id;
                     courses.forEach(course =>
-                        new Grade({
+                        db.createGrade({
                             user_id: id,
                             course_code: course,
                             grade: 0.0
-                        }).save()
+                        })
                     );
                     auth.authenticate(newUser.email, password, (err2, user) => {
                         if (err2) throw err2;
