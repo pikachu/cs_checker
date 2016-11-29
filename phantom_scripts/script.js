@@ -4,6 +4,8 @@ const Grade = require('../models/grade');
 const bookshelf = require('../bookshelf');
 const sendMessage = require('./utils/email').sendMessage;
 const getUser = require('../controllers/utils/db').getUser;
+const xpath = require('xpath');
+const Dom = require('xmldom').DOMParser;
 
 async function loginToGradeServer(instance, username, password) {
     const page = await instance.createPage();
@@ -38,6 +40,31 @@ async function loginToGradeServer(instance, username, password) {
     }, loginInfo);
 
     return await loginPromise;
+}
+
+async function getCourses(page) {
+    await page.open('https://grades.cs.umd.edu/classWeb/login.cgi');
+    const content = await page.property('content');
+    const doc = new Dom().parseFromString(content);
+    const nodes = xpath.select('//a[contains(@href, "viewGrades.cgi?courseID")]', doc);
+
+    return nodes.map(node => ({
+        href: xpath.select('@href', node)[0].value,
+        course: xpath.select('text()', node)[0].data
+    }));
+}
+
+async function getGrade(page, course) {
+    await page.open(`https://grades.cs.umd.edu/classWeb/${course.href}`);
+    const content = await page.property('content');
+    const doc = new Dom().parseFromString(content);
+    const nodes = xpath.select('//table//table//tr[last()]/td[2]/text()', doc);
+
+    try {
+        return parseFloat(nodes[0].data);
+    } catch (e) {
+        return null;
+    }
 }
 
 function doPhantom(username, password, courses) {
