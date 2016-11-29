@@ -5,6 +5,41 @@ const bookshelf = require('../bookshelf');
 const sendMessage = require('./utils/email').sendMessage;
 const getUser = require('../controllers/utils/db').getUser;
 
+async function loginToGradeServer(instance, username, password) {
+    const page = await instance.createPage();
+    const status = await page.open('https://grades.cs.umd.edu/classWeb/login.cgi');
+    if (status === 'fail') throw Error('Failed to load grades.cs.umd.edu');
+
+    let loginSucceeded;
+    let loginFailed;
+    const loginPromise = new Promise(
+        (resolve, reject) => {
+            loginSucceeded = resolve;
+            loginFailed = reject;
+        }
+    );
+
+    await page.on('onResourceReceived', async () => {
+        try {
+            const content = await page.property('content');
+            // TODO check content to make sure we are logged in
+            loginSucceeded(page);
+        } catch (e) {
+            loginFailed(e);
+        }
+    });
+
+    const loginInfo = { username, password };
+    await page.evaluate(function (obj) {
+        const arr = document.getElementsByTagName('form');
+        arr[0].elements.user.value = obj.username;
+        arr[0].elements.password.value = obj.password;
+        document.getElementsByTagName('form')[0].submit.click();
+    }, loginInfo);
+
+    return await loginPromise;
+}
+
 function doPhantom(username, password, courses) {
     let phInstance;
     let sitePage;
