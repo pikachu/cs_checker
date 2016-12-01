@@ -22,7 +22,8 @@ exports.profileGet = function (req, res) {
             res.render('profile', {
                 email: req.session.user.email,
                 directory_id: req.session.user.directory_id,
-                classes: courses
+                classes: courses,
+                phone_number: req.session.user.phone_number
             });
         });
     });
