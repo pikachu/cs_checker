@@ -9,6 +9,9 @@ exports.up = function(knex) {
       table.string('directory_id').unique();
       table.string('directory_pass');
       table.string('phone_number');
+      table.boolean('getsEmails');
+      table.boolean('getsTexts');
+      table.boolean('validCredentials');
     })
     .createTable('grades', function(table) {
         table.increments('id').primary();
