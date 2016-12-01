@@ -1,11 +1,13 @@
 const phantom = require('phantom');
 const User = require('../models/user');
 const Grade = require('../models/grade');
+const db = require('../controllers/utils/db');
 const bookshelf = require('../bookshelf');
 const sendMessage = require('./utils/email').sendMessage;
 const getUser = require('../controllers/utils/db').getUser;
 const xpath = require('xpath');
 const Dom = require('xmldom').DOMParser;
+const knex = require('../config/knex');
 
 async function loginToGradeServer(instance, username, password) {
     const page = await instance.createPage();
@@ -50,7 +52,7 @@ async function getCourses(page) {
 
     return nodes.map(node => ({
         href: xpath.select('@href', node)[0].value,
-        course: xpath.select('text()', node)[0].data
+        course: xpath.select('text()', node)[0].data.match(/CMSC(\d\d\d\d?[A-z]?)/)[1]
     }));
 }
 
@@ -65,6 +67,28 @@ async function getGrade(page, course) {
     } catch (e) {
         return null;
     }
+}
+
+async function checkUser(user) {
+    const courseGrades = {};
+    (await db.getUserGrades(user)).forEach(gradeInfo => {
+        courseGrades[gradeInfo.course_code] = gradeInfo.grade;
+    });
+    const instance = await phantom.create();
+    const userPage = await loginToGradeServer(instance, user.directory_id, user.directory_pass);
+    const courses = (await getCourses(userPage)).filter(courseInfo =>
+        Object.keys(courseGrades).includes(courseInfo.course)
+    );
+
+    for (let i = 0; i < courses.length; i++) {
+        const courseInfo = courses[i];
+        const grade = await getGrade(userPage, courseInfo);
+        if (courseGrades[courseInfo.course] !== grade) {
+            console.log(`updating ${courseInfo.course} course grade for ${user.directory_id}`);
+            await knex('grades').where('user_id', user.id).where('course_code', courseInfo.course).update('grade', grade);
+        }
+    }
+    await instance.exit();
 }
 
 function doPhantom(username, password, courses) {
@@ -219,4 +243,4 @@ function updateUser(username) {
     });
 }
 
-module.exports = { updateUser };
+module.exports = { updateUser, checkUser };
