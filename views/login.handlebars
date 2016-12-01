@@ -1,5 +1,4 @@
 <div class="container">
-  <h3>Login</h3>
   {{#if messages.success}}
     <div class="text-success">
       {{#each messages.success}}
@@ -14,11 +13,25 @@
       {{/each}}
     </div>
   {{/if}}
+  <img src="http://www.cs.umd.edu/Outreach/hsContest13/icons/TurtleCS.jpg" class="logo" />
+  <div class="row">
+      <h1>UMD CS Grade Notifier</h1>
+  </div>
   <form method="POST">
-    <label for="email">Email</label>
-    <input type="text" name="email" id="email" autofocus>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password">
-    <button type="submit">Send</button>
+      <div class="row">
+          <div class="three columns">
+              <input type="text" name="email" id="email" placeholder="email" autofocus>
+          </div>
+      </div>
+      <div class="row">
+          <div class="three columns">
+              <input type="password" name="password" id="password" placeholder="password">
+          </div>
+      </div>
+    <div class="row">
+        <div class="two columns">
+            <button type="submit">save</div>
+        </div>
+    </div>
   </form>
 </div>

@@ -30,6 +30,21 @@
                     }
                 });
             }
+
+            function updateProf(){
+                /* Need to add phone number and the two checkboxes */
+                console.log("heuo");
+                $.ajax({
+                    url: '/profile',
+                    type: 'POST',
+                    data: {
+                        newUMDPass: $('#umdpass').val(),
+                        newPhone: $('#phoneNumber').val(),
+                        getTexts: $('#getTexts').is(":checked"),
+                        getEmails: $('#getEmails').is(":checked")
+                    }
+                });
+            }
         </script>
         <img src="http://www.cs.umd.edu/Outreach/hsContest13/icons/TurtleCS.jpg" class="logo" />
         <div class="row">
@@ -37,7 +52,7 @@
         </div>
         <div class="row">
             <div class="three columns">
-                <input type="text" value="{{directory_id}}">
+                <input type="text" value="{{directory_id}}" readonly>
             </div>
             <div class="two columns">
                 umd username
@@ -45,7 +60,7 @@
         </div>
         <div class="row">
             <div class="three columns">
-                <input type="password" placeholder="update me!">
+                <input id="umdpass" type="password" placeholder="update me!">
             </div>
             <div class="two columns">
                 umd password
@@ -53,7 +68,7 @@
         </div>
         <div class="row">
             <div class="three columns">
-                <input type="text" value="{{phone_number}}">
+                <input id="phoneNumber" type="text" value="{{phone_number}}">
             </div>
             <div class="two columns">
                 phone number
@@ -82,14 +97,14 @@
         </div>
 
         <div class="row">
-            <input type="checkbox"> get texts?
+            <input id="getTexts" type="checkbox"> get texts?
         </div>
         <div class="row">
-            <input type="checkbox"> get emails?
+            <input id="getEmails" type="checkbox"> get emails?
         </div>
         <div class="row">
             <div class="two columns">
-                <div class="button">save</div>
+                <button onclick="updateProf()">save</button>
             </div>
         </div>
 

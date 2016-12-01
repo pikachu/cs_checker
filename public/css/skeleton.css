@@ -232,7 +232,7 @@ p {
     clear: both;
 }
 
-.button {
+button {
     background-color: #D27379;
     /* Green */
     border: none;
@@ -247,14 +247,15 @@ p {
     font-size: .86em;
     font-weight: 300;
     margin-bottom: 20px;
+    outline: none;
 }
 
-.button:hover {
+button:hover {
     background-color: #e5adb0;
     /* Green */
 }
 
-.button:active {
+button:active {
     background-color: #bc3c45;
     /* Green */
 }
