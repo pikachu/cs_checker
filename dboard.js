@@ -6,30 +6,49 @@ const testValidClasses = require('./phantom_scripts/testClasses').testValidClass
  * newCourses is an array of new courses that we have no information about, but
  * the user wants to monitor them.
  */
+
+function addCourse(userId, newCourse, callback) {
+    new Grade({
+        user_id: userId,
+        course_code: newCourse,
+        grade: 0.0
+    }).save().then(() => callback());
+}
+
 function addCourses(userId, newCourses, callback) {
-    newCourses.forEach(courseCode => {
-        new Grade({
-            user_id: userId,
-            course_code: courseCode,
-            grade: 0.0
-        }).save().then(() => callback());
-    });
+    if (typeof userId === 'string'){
+        addCourses(userId, newCourses.split(','), callback);
+    } else {
+        if (newCourses.length > 0) {
+            addCourse(userId, newCourses[0], () => {
+                addCourses(userId, newCourses.slice(1, newCourses.length), callback);
+            });
+        } else {
+            callback();
+        }
+    }
 }
 
-/*
- * coursesToDel are courses that the user has previously tracked, but has removed
- * from their desired "to track" list.
- */
+function delCourse(userId, course, callback) {
+    bookshelf.knex('grades').where({ course_code: course, user_id: userId }).del().then(() =>
+        callback()
+    );
+}
+
+
 function delCourses(userId, coursesToDel, callback) {
-    coursesToDel.forEach(course => {
-        console.log("Deleting course " + course);
-        bookshelf.knex('grades').where({
-            course_code: course,
-            user_id: userId
-        }).del().then(() => callback());
-    });
+    if (typeof userId === 'string'){
+        delCourses(userId, coursesToDel.split(','), callback);
+    } else {
+        if (coursesToDel.length > 0) {
+            delCourse(userId, coursesToDel[0], () => {
+                delCourses(userId, coursesToDel.slice(1, coursesToDel.length), callback);
+            });
+        } else {
+            callback();
+        }
+    }
 }
-
 // detectDiffCourses
 function detectDiffCourses(userId, courseString, callback) {
     const newCourses = courseString.split(',');
@@ -53,20 +72,10 @@ function detectDiffCourses(userId, courseString, callback) {
                 del.push(oldCourse);
             }
         });
-        console.log("about to make the changes now.");
-        del.forEach(course => {
-            console.log("Deleting course " + course);
-            bookshelf.knex('grades').where({
-                course_code: course,
-                user_id: userId
-            }).del().then(() =>
-            add.forEach(courseCode => {
-                new Grade({
-                    user_id: userId,
-                    course_code: courseCode,
-                    grade: 0.0
-                }).save().then(() => callback());
-            }));
+        delCourses(userId, del, () => {
+            addCourses(userId, add, () => {
+                callback();
+            });
         });
     });
 }
