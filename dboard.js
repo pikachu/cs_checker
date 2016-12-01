@@ -88,20 +88,13 @@ function areCoursesValidForUser(userId, courseString, callback) {
     });
 }
 
-function getUpdatedElements(userId, callback) {
+function getUpdatedCourses(userId, callback) {
     const arr = [];
-    var UID;
-    newElements = {};
     bookshelf.knex('grades').where('user_id', userId).then(grades => {
         grades.forEach(grade => {
             arr.push(grade.course_code);
         });
-        bookshelf.knex('users').where('id', userId).then(users => {
-            UID = users[0].directory_id;
-            newElements["directory_id"] = UID;
-            newElements["classes"] = arr;
-            callback(newElements);
-        });
+        callback(arr);
     });
 }
 
@@ -109,5 +102,5 @@ module.exports = { addCourses,
     delCourses,
     detectDiffCourses,
     areCoursesValidForUser,
-    getUpdatedElements
+    getUpdatedCourses
 };

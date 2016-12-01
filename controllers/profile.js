@@ -32,13 +32,13 @@ exports.profileGet = function (req, res) {
 exports.updateProfile = function (req, res) {
     bookshelf.knex('users').where('email', req.session.user.email).then(users => {
         console.log(req.body.coursesToChange);
-        if (req.body.newUMDID){
-            console.log("new UMDID!");
-            new User({
-                id: users[0].id,
-                email: req.session.user.email
-            }).save({directory_id: req.body.newUMDID},{patch: true}).then(() => {console.log("updated!");});
-        }
+        // if (req.body.newUMDID){
+        //     console.log("new UMDID!");
+        //     new User({
+        //         id: users[0].id,
+        //         email: req.session.user.email
+        //     }).save({directory_id: req.body.newUMDID},{patch: true}).then(() => {console.log("updated!");});
+        // }
         if (req.body.newUMDPass){
             console.log("new UMDPass!");
             encrypted_pass = encryption.encrypt(req.body.newUMDPass);
@@ -51,21 +51,21 @@ exports.updateProfile = function (req, res) {
             req.body.coursesToChange, shouldContinue => {
                 if (shouldContinue) {
                     dashboard.detectDiffCourses(users[0].id, req.body.coursesToChange, () => {
-                        dashboard.getUpdatedElements(users[0].id, newElements => {
+                        dashboard.getUpdatedCourses(users[0].id, classes => {
                             res.render('profile', {
                                 email: req.session.user.email,
-                                directory_id: newElements.directory_id,
-                                classes: newElements.classes,
+                                directory_id: req.session.user.directory_id,
+                                classes,
                                 successful_changes: 'Changes made!'
                             });
                         });
                     });
                 } else {
-                    dashboard.getUpdatedElements(users[0].id, newElements => {
+                    dashboard.getUpdatedCourses(users[0].id, classes => {
                         res.render('profile', {
                             email: req.session.user.email,
-                            directory_id: newElements.directory_id,
-                            classes: newElements.classes,
+                            directory_id: req.session.user.directory_id,
+                            classes,
                             successful_changes: 'Changes made!'
                         });
                     });
