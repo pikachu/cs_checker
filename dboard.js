@@ -59,16 +59,15 @@ function detectDiffCourses(userId, courseString, callback) {
             bookshelf.knex('grades').where({
                 course_code: course,
                 user_id: userId
-            }).del().then(() => callback());
+            }).del().then(() =>
+            add.forEach(courseCode => {
+                new Grade({
+                    user_id: userId,
+                    course_code: courseCode,
+                    grade: 0.0
+                }).save().then(() => callback());
+            }));
         });
-        add.forEach(courseCode => {
-            new Grade({
-                user_id: userId,
-                course_code: courseCode,
-                grade: 0.0
-            }).save().then(() => callback());
-        });
-
     });
 }
 
