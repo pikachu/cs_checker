@@ -88,7 +88,7 @@ function areCoursesValidForUser(userId, courseString, callback) {
     });
 }
 
-function getCoursesAsArray(userId, callback) {
+function getUpdatedCourses(userId, callback) {
     const arr = [];
     bookshelf.knex('grades').where('user_id', userId).then(grades => {
         grades.forEach(grade => {
@@ -102,5 +102,5 @@ module.exports = { addCourses,
     delCourses,
     detectDiffCourses,
     areCoursesValidForUser,
-    getCoursesAsArray
+    getUpdatedCourses
 };

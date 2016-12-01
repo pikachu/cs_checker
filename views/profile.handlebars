@@ -1,17 +1,99 @@
 <div class="container">
-  <h3>Hello {{email}}</h3>
-  <form action="http://localhost:3000/profile" method="post">
-    <b>Cuurent Email:</b> {{email}}<br><br>
-    <b>University ID:</b> {{directory_id}}<br><br>
-    Update UID: <input type="text" name="newUMDID"><br>
-    Update University Password: <input type="text" name="newUMDPass">
-    <br><br>
-    <b>Current Courses: </b><input type="text" value="{{classes}}" name="coursesToChange"><br><br>
-	<input type="submit" value="SaveChanges">
-  </form>
-  <br>
-  <form action="http://localhost:3000/logout" method="get">
-      <input type="submit" value="LogOut">
-  </form>
-  <p>{{successful_changes}}</p>
-</div>
+        <script>
+            function deleteMe(courseCode){
+                var idStr = "." + courseCode;
+                $(idStr).remove();
+                $.ajax({
+                    url: '/api/course',
+                    type: 'DELETE',
+                    data: { courseCode: courseCode }
+                });
+            }
+
+            function addNew(){
+                var newCourse = $('#newCourse').val();
+                $('#newCourse').val('');
+                $('.addErrorText').html('<img style="width: 20px;" src="http://sampsonresume.com/labs/pIkfp.gif">');
+                $.ajax({
+                    url: '/api/course',
+                    type: 'POST',
+                    data: { courseCode: newCourse },
+                    success: function(a,b,c){
+                        console.log('Hi');
+                        $('.addErrorText').text('Success!');
+                        $('ul').append('<li class=' + newCourse +
+                            '>' + newCourse + '&nbsp;&nbsp;&nbsp;&nbsp;<span onclick="deleteMe(' +
+                            newCourse +')" class="addOrDelete">delete</span></li>');
+                    },
+                    error: function(a,b,c){
+                        $('.addErrorText').text('Invalid Class! Either you are not in it, or it is already here!');
+                    }
+                });
+            }
+        </script>
+        <img src="http://www.cs.umd.edu/Outreach/hsContest13/icons/TurtleCS.jpg" class="logo" />
+        <div class="row">
+            <h1>UMD CS Grade Notifier (Dashboard - {{email}})</h1>
+        </div>
+        <div class="row">
+            <div class="three columns">
+                <input type="text" value="{{directory_id}}">
+            </div>
+            <div class="two columns">
+                umd username
+            </div>
+        </div>
+        <div class="row">
+            <div class="three columns">
+                <input type="password" placeholder="update me!">
+            </div>
+            <div class="two columns">
+                umd password
+            </div>
+        </div>
+        <div class="row">
+            <div class="three columns">
+                <input type="text" value="{{phone_number}}">
+            </div>
+            <div class="two columns">
+                phone number
+            </div>
+        </div>
+        <div class="row">
+        current classes
+        </div>
+        <div class="row">
+            <ul class="classList">
+                {{#each classes}}
+                    <li class="{{this}}">{{this}}&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span onclick="deleteMe({{this}})" class="addOrDelete">delete</span></li>
+                {{/each}}
+            </ul>
+        </div>
+        <div class="row">
+            <div class="two columns">
+                <input type="text" id="newCourse" placeholder="new course">
+            </div>
+            <div class="one column">
+                <span class="addOrDelete" onclick="addNew()">add</span>
+            </div>
+            <div class="nine columns addErrorText">
+            </div>
+        </div>
+
+        <div class="row">
+            <input type="checkbox"> get texts?
+        </div>
+        <div class="row">
+            <input type="checkbox"> get emails?
+        </div>
+        <div class="row">
+            <div class="two columns">
+                <div class="button">save</div>
+            </div>
+        </div>
+
+
+
+
+    </div>

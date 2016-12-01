@@ -3,6 +3,7 @@ var Grade = require('../models/grade');
 var dashboard = require('../dboard');
 var bookshelf = require('../bookshelf');
 var logout = require('../controllers/logout');
+var encryption = require('./utils/encryption');
 // var formidable = require('formidable');
 var util = require('util');
 
@@ -21,7 +22,8 @@ exports.profileGet = function (req, res) {
             res.render('profile', {
                 email: req.session.user.email,
                 directory_id: req.session.user.directory_id,
-                classes: courses
+                classes: courses,
+                phone_number: req.session.user.phone_number
             });
         });
     });
@@ -30,11 +32,26 @@ exports.profileGet = function (req, res) {
 exports.updateProfile = function (req, res) {
     bookshelf.knex('users').where('email', req.session.user.email).then(users => {
         console.log(req.body.coursesToChange);
+        // if (req.body.newUMDID){
+        //     console.log("new UMDID!");
+        //     new User({
+        //         id: users[0].id,
+        //         email: req.session.user.email
+        //     }).save({directory_id: req.body.newUMDID},{patch: true}).then(() => {console.log("updated!");});
+        // }
+        if (req.body.newUMDPass){
+            console.log("new UMDPass!");
+            encrypted_pass = encryption.encrypt(req.body.newUMDPass);
+            new User({
+                id: users[0].id,
+                email: req.session.user.email
+            }).save({directory_pass: encrypted_pass},{patch: true}).then(() => {console.log("updated!");});
+        }
         dashboard.areCoursesValidForUser(users[0].id,
             req.body.coursesToChange, shouldContinue => {
                 if (shouldContinue) {
                     dashboard.detectDiffCourses(users[0].id, req.body.coursesToChange, () => {
-                        dashboard.getCoursesAsArray(users[0].id, classes => {
+                        dashboard.getUpdatedCourses(users[0].id, classes => {
                             res.render('profile', {
                                 email: req.session.user.email,
                                 directory_id: req.session.user.directory_id,
@@ -44,12 +61,12 @@ exports.updateProfile = function (req, res) {
                         });
                     });
                 } else {
-                    dashboard.getCoursesAsArray(users[0].id, classes => {
+                    dashboard.getUpdatedCourses(users[0].id, classes => {
                         res.render('profile', {
                             email: req.session.user.email,
                             directory_id: req.session.user.directory_id,
                             classes,
-                            successful_changes: 'Invalid courses provided!'
+                            successful_changes: 'Changes made!'
                         });
                     });
                 }

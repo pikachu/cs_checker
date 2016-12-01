@@ -12,6 +12,7 @@ const expressValidator = require('express-validator');
 const dotenv = require('dotenv');
 const exphbs = require('express-handlebars');
 const auth = require('./controllers/utils/authentication');
+const api = require('./controllers/api');
 
 // Load environment variables from .env file
 dotenv.load();
@@ -45,6 +46,8 @@ app.use(session({ secret: process.env.SESSION_SECRET, resave: true, saveUninitia
 app.use(flash());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.delete('/api/course', api.deleteCourse);
+app.post('/api/course', api.addCourse);
 app.get('/', HomeController.index);
 app.get('/signup', signupController.signupGet);
 app.post('/signup', signupController.signupPost);
