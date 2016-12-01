@@ -1,20 +1,21 @@
-const updateUser = require('../script').updateUser;
-const bookshelf = require('../../bookshelf');
+const checkUser = require('../script').checkUser;
+const knex = require('../../config/knex');
+const PromisePool = require('es6-promise-pool');
+const crypt = require('../../controllers/utils/encryption');
 
-bookshelf.knex('users').select().then(users => {
-    let upper = Math.min(10, users.length);
-    let curr = users.slice(0, upper);
-    users = users.slice(upper, users.length);
-    const refreshIntervalId = setInterval(() => {
-        curr.forEach(user => {
-            console.log(`Checking with user ${user.directory_id}`);
-            updateUser(user.directory_id);
-        });
-        upper = Math.min(10, users.length);
-        curr = users.slice(0, upper);
-        users = users.slice(upper, users.length);
-        if (curr.length === 0) {
-            clearInterval(refreshIntervalId);
+async function checkGrades(concurrency) {
+    const users = await knex('users').select();
+    const pool = new PromisePool(() => {
+        if (users.length > 0) {
+            const user = users.pop();
+            console.log(`Checking user: ${user.directory_id}`)
+            user.directory_pass = crypt.decrypt(user.directory_pass);
+            return checkUser(user);
+        } else {
+            return null;
         }
-    }, 10000);
-});
+    }, concurrency);
+
+    await pool.start();
+    console.log('Complete');
+}
