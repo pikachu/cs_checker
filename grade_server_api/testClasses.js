@@ -1,6 +1,6 @@
 var phantom = require('phantom');
 var bookshelf = require('../bookshelf');
-var getUser = require('../controllers/utils/db').getUser;
+var getUser = require('../common/db').getUser;
 
 function testValidClasses(user_id, classes_str, callback){
     var classes = classes_str.split(",");

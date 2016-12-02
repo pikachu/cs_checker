@@ -1,6 +1,6 @@
 const Grade = require('./models/grade');
 const bookshelf = require('./bookshelf');
-const testValidClasses = require('./phantom_scripts/testClasses').testValidClasses;
+const testValidClasses = require('./grade_server_api/testClasses').testValidClasses;
 
 /*
  * newCourses is an array of new courses that we have no information about, but
