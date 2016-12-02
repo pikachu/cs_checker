@@ -21,10 +21,3 @@ async function checkGrades(concurrency) {
     await pool.start();
     console.log('Complete');
 }
-
-(async () => {
-    const instance = await phantom.create();
-    await script.loginToGradeServer(instance, 'msteven9', 'Iamnred1');
-    await checkGrades(1);
-    process.exit();
-})();

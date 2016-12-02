@@ -30,105 +30,92 @@
                     }
                 });
             }
-
-            function updateProf(){
-                /* Need to add phone number and the two checkboxes */
-                console.log("heuo");
-                $.ajax({
-                    url: '/profile',
-                    type: 'POST',
-                    data: {
-                        newUMDPass: $('#umdpass').val(),
-                        newPhone: $('#phoneNumber').val(),
-                        getsTexts: $('#getsTexts').is(":checked"),
-                        getsEmails: $('#getsEmails').is(":checked")
-                    }
-                });
-            }
         </script>
         <img src="http://www.cs.umd.edu/Outreach/hsContest13/icons/TurtleCS.jpg" class="logo" />
         <div class="row">
             <h1>UMD CS Grade Notifier (Dashboard - {{email}})</h1>
         </div>
-        <div class="row">
-            <div class="three columns">
-                <input type="text" value="{{directory_id}}" readonly>
+        <form method="POST">
+            <div class="row">
+                <div class="three columns">
+                    <input type="text" value="{{directory_id}}" readonly>
+                </div>
+                <div class="two columns">
+                    umd username
+                </div>
             </div>
-            <div class="two columns">
-                umd username
-            </div>
-        </div>
-        <div class="row">
-            <div class="three columns">
-                <input id="umdpass" type="password" placeholder="update me">
-            </div>
-            <div class="two columns">
-                umd password
-            </div>
-            <div class="four columns">
+            <div class="row">
+                <div class="three columns">
+                    <input id="umdpass" name="newUMDPass" type="password" placeholder="update me">
+                </div>
+                <div class="two columns">
+                    umd password
+                </div>
+                <div class="four columns">
 
-            {{#if validCredentials}}
-                <!-- Our last check was good! -->
-            {{else}}
-                <strong>YOU MUST UPDATE THIS NOW!</strong>
-            {{/if}}
-            </div>
-
-        </div>
-        <div class="row">
-            <div class="three columns">
-                {{#if phone_number}}
-                    <input id="phoneNumber" type="text" value="{{phone_number}}">
+                {{#if validCredentials}}
+                    <!-- Our last check was good! -->
                 {{else}}
-                    <input id="phoneNumber" type="text" placeholder="enter number">
+                    <strong>YOU MUST UPDATE THIS NOW!</strong>
+                {{/if}}
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="three columns">
+                    {{#if phone_number}}
+                        <input id="phoneNumber" name="newPhone" type="text" value="{{phone_number}}">
+                    {{else}}
+                        <input id="phoneNumber" name="newPhone" type="text" placeholder="enter number">
+                    {{/if}}
+                </div>
+                <div class="two columns">
+                    phone number
+                </div>
+            </div>
+            <div class="row">
+            current classes
+            </div>
+            <div class="row">
+                <ul class="classList">
+                    {{#each classes}}
+                        <li class="{{this}}">{{this}}&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span onclick="deleteMe({{this}})" class="addOrDelete">delete</span></li>
+                    {{/each}}
+                </ul>
+            </div>
+            <div class="row">
+                <div class="two columns">
+                    <input type="text" id="newCourse" placeholder="new course">
+                </div>
+                <div class="one column">
+                    <span class="addOrDelete" onclick="addNew()">add</span>
+                </div>
+                <div class="nine columns addErrorText">
+                </div>
+            </div>
+
+            <div class="row">
+                {{#if getsTexts}}
+                    <input id="getsTexts" name="getsTexts" type="checkbox" checked> get texts?
+                {{else}}
+                    <input id="getsTexts" name="getsTexts" type="checkbox"> get texts?
                 {{/if}}
             </div>
-            <div class="two columns">
-                phone number
-            </div>
-        </div>
-        <div class="row">
-        current classes
-        </div>
-        <div class="row">
-            <ul class="classList">
-                {{#each classes}}
-                    <li class="{{this}}">{{this}}&nbsp;&nbsp;&nbsp;&nbsp;
-                        <span onclick="deleteMe({{this}})" class="addOrDelete">delete</span></li>
-                {{/each}}
-            </ul>
-        </div>
-        <div class="row">
-            <div class="two columns">
-                <input type="text" id="newCourse" placeholder="new course">
-            </div>
-            <div class="one column">
-                <span class="addOrDelete" onclick="addNew()">add</span>
-            </div>
-            <div class="nine columns addErrorText">
-            </div>
-        </div>
 
-        <div class="row">
-            {{#if getsTexts}}
-                <input id="getsTexts" type="checkbox" checked> get texts?
-            {{else}}
-                <input id="getsTexts" type="checkbox"> get texts?
-            {{/if}}
-        </div>
-
-        <div class="row">
-            {{#if getsEmails}}
-                <input id="getsEmails" type="checkbox" checked> get emails?
-            {{else}}
-                <input id="getsEmails" type="checkbox" > get emails?
-            {{/if}}
-        </div>
-        <div class="row">
-            <div class="two columns">
-                <button onclick="updateProf()">save</button>
+            <div class="row">
+                {{#if getsEmails}}
+                    <input id="getsEmails" name="getsEmails" type="checkbox" checked> get emails?
+                {{else}}
+                    <input id="getsEmails" name="getsEmails" type="checkbox" > get emails?
+                {{/if}}
             </div>
-        </div>
+            <div class="row">
+                <div class="two columns">
+                    <button type="submit">save</button>
+                </div>
+            </div>
+        </form>
 
 
 

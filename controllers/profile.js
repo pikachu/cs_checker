@@ -6,6 +6,8 @@ var logout = require('../controllers/logout');
 var encryption = require('../common/encryption');
 // var formidable = require('formidable');
 var util = require('util');
+const phantom = require('phantom');
+const script = require('../grade_server_api/script');
 
 /**
  * GET /logout
@@ -26,53 +28,47 @@ exports.profileGet = function (req, res) {
                 phone_number: req.session.user.phone_number,
                 getsEmails: req.session.user.getsEmails,
                 getsTexts: req.session.user.getsTexts,
-                validCredentials: req.session.user.validCredentials,
+                validCredentials: req.session.user.validCredentials
             });
         });
     });
 };
 
-exports.updateProfile = function (req, res) {
-    bookshelf.knex('users').where('email', req.session.user.email).then(users => {
-        console.log(req.body.coursesToChange);
-        // if (req.body.newUMDID){
-        //     console.log("new UMDID!");
-        //     new User({
-        //         id: users[0].id,
-        //         email: req.session.user.email
-        //     }).save({directory_id: req.body.newUMDID},{patch: true}).then(() => {console.log("updated!");});
-        // }
-        if (req.body.newUMDPass){
-            console.log("new UMDPass!");
-            encrypted_pass = encryption.encrypt(req.body.newUMDPass);
-            new User({
-                id: users[0].id,
-                email: req.session.user.email
-            }).save({directory_pass: encrypted_pass},{patch: true}).then(() => {console.log("updated!");});
-        }
-        dashboard.areCoursesValidForUser(users[0].id,
-            req.body.coursesToChange, shouldContinue => {
-                if (shouldContinue) {
-                    dashboard.detectDiffCourses(users[0].id, req.body.coursesToChange, () => {
-                        dashboard.getUpdatedCourses(users[0].id, classes => {
-                            res.render('profile', {
-                                email: req.session.user.email,
-                                directory_id: req.session.user.directory_id,
-                                classes,
-                                successful_changes: 'Changes made!'
-                            });
-                        });
-                    });
-                } else {
-                    dashboard.getUpdatedCourses(users[0].id, classes => {
-                        res.render('profile', {
-                            email: req.session.user.email,
-                            directory_id: req.session.user.directory_id,
-                            classes,
-                            successful_changes: 'Changes made!'
-                        });
-                    });
-                }
+exports.updateProfile = async function (req, res) {
+    console.log(`The user id is ${req.session.user.id}`);
+    console.log(req.body);
+    if (req.body.newUMDPass && req.body.newUMDPass !== '') {
+        console.log("updating password");
+        const instance = await phantom.create();
+        const encryptedPass = encryption.encrypt(req.body.newUMDPass);
+        await bookshelf.knex('users').where('id', req.session.user.id).update({
+            directory_pass: encryptedPass
+        });
+        try {
+            await script.loginToGradeServer(instance,
+                req.session.user.directory_id, req.body.newUMDPass);
+            console.log("Valid new pass");
+            await bookshelf.knex('users').where('id', req.session.user.id).update({
+                validCredentials: true
             });
+        } catch (e) {
+            await bookshelf.knex('users').where('id', req.session.user.id).update({
+                validCredentials: false
+            });
+        }
+    }
+    console.log("updating emails texts newphone");
+    await bookshelf.knex('users').where('id', req.session.user.id).update({
+        getsEmails: req.body.getsEmails ? true : false,
+        getsTexts: req.body.getsTexts ? true : false,
+        phone_number: req.body.newPhone
+    });
+    bookshelf.knex('users').where('id', req.session.user.id).then(users => {
+        req.session.regenerate(() => {
+            req.session.user = users[0];
+            res.status(200);
+            req.flash('success', { msg: `Information saved for ${req.body.email}` });
+            res.redirect('/profile');
+        });
     });
 };
