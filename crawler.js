@@ -19,3 +19,8 @@ async function checkGrades(concurrency) {
     await pool.start();
     console.log('Complete');
 }
+
+(async () => {
+    await checkGrades(1);
+    process.exit();
+})();

@@ -50,10 +50,13 @@ async function getCourses(page) {
     const doc = new Dom().parseFromString(content);
     const nodes = xpath.select('//a[contains(@href, "viewGrades.cgi?courseID")]', doc);
 
-    return nodes.map(node => ({
-        href: xpath.select('@href', node)[0].value,
-        course: xpath.select('text()', node)[0].data.match(/CMSC(\d\d\d\d?[A-z]?)/)[1]
-    }));
+    return nodes.map(node => {
+        const courseMatch = xpath.select('text()', node)[0].data.match(/CMSC(\d\d\d\d?[A-z]?)/);
+        return {
+            href: xpath.select('@href', node)[0].value,
+            course: courseMatch ? courseMatch[1] : null
+        };
+    });
 }
 
 async function getGrade(page, course) {
@@ -88,6 +91,7 @@ async function checkUser(user) {
             await knex('grades').where('user_id', user.id).where('course_code', courseInfo.course).update('grade', grade);
         }
     }
+    console.log(`Finished for user ${user.directory_id}`);
     await instance.exit();
 }
 
