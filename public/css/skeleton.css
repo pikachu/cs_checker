@@ -285,6 +285,11 @@ input[type=password] {
     width: 100%;
 }
 
+input[type=email] {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
 input[type=checkbox] {
     margin-bottom: 20px;
 }
