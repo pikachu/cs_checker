@@ -60,11 +60,20 @@
         </div>
         <div class="row">
             <div class="three columns">
-                <input id="umdpass" type="password" placeholder="update me!">
+                <input id="umdpass" type="password" placeholder="update me">
             </div>
             <div class="two columns">
                 umd password
             </div>
+            <div class="four columns">
+
+            {{#if validCredentials}}
+                <!-- Our last check was good! -->
+            {{else}}
+                <strong>YOU MUST UPDATE THIS NOW!</strong>
+            {{/if}}
+            </div>
+
         </div>
         <div class="row">
             <div class="three columns">
@@ -107,6 +116,7 @@
                 <input id="getsTexts" type="checkbox"> get texts?
             {{/if}}
         </div>
+
         <div class="row">
             {{#if getsEmails}}
                 <input id="getsEmails" type="checkbox" checked> get emails?
