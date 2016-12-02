@@ -40,8 +40,8 @@
                     data: {
                         newUMDPass: $('#umdpass').val(),
                         newPhone: $('#phoneNumber').val(),
-                        getTexts: $('#getTexts').is(":checked"),
-                        getEmails: $('#getEmails').is(":checked")
+                        getsTexts: $('#getsTexts').is(":checked"),
+                        getsEmails: $('#getsEmails').is(":checked")
                     }
                 });
             }
@@ -60,15 +60,28 @@
         </div>
         <div class="row">
             <div class="three columns">
-                <input id="umdpass" type="password" placeholder="update me!">
+                <input id="umdpass" type="password" placeholder="update me">
             </div>
             <div class="two columns">
                 umd password
             </div>
+            <div class="four columns">
+
+            {{#if validCredentials}}
+                <!-- Our last check was good! -->
+            {{else}}
+                <strong>YOU MUST UPDATE THIS NOW!</strong>
+            {{/if}}
+            </div>
+
         </div>
         <div class="row">
             <div class="three columns">
-                <input id="phoneNumber" type="text" value="{{phone_number}}">
+                {{#if phone_number}}
+                    <input id="phoneNumber" type="text" value="{{phone_number}}">
+                {{else}}
+                    <input id="phoneNumber" type="text" placeholder="enter number">
+                {{/if}}
             </div>
             <div class="two columns">
                 phone number
@@ -97,10 +110,19 @@
         </div>
 
         <div class="row">
-            <input id="getTexts" type="checkbox"> get texts?
+            {{#if getsTexts}}
+                <input id="getsTexts" type="checkbox" checked> get texts?
+            {{else}}
+                <input id="getsTexts" type="checkbox"> get texts?
+            {{/if}}
         </div>
+
         <div class="row">
-            <input id="getEmails" type="checkbox"> get emails?
+            {{#if getsEmails}}
+                <input id="getsEmails" type="checkbox" checked> get emails?
+            {{else}}
+                <input id="getsEmails" type="checkbox" > get emails?
+            {{/if}}
         </div>
         <div class="row">
             <div class="two columns">
