@@ -1,33 +1,62 @@
 <div class="container">
-  <h3>Signup Form</h3>
-  {{#if messages.success}}
-    <div class="text-success">
-      {{#each messages.success}}
-        <div>{{msg}}</div>
-      {{/each}}
+  <script>
+  function addAnimation(){
+      $('.animation').html('<img style="width: 20px;" src="http://sampsonresume.com/labs/pIkfp.gif">');
+  }
+  </script>
+  <img src="http://www.cs.umd.edu/Outreach/hsContest13/icons/TurtleCS.jpg" class="logo" />
+  <div class="row">
+      <h1>UMD CS Grade Notifier</h1>
+  </div>
+  <form method="POST" onsubmit="addAnimation()">
+    <div class="row">
+        <div class="three columns">
+            {{#if email}}
+                <input type="email" name="email" id="email" placeholder="email" value="{{email}}" autofocus>
+            {{else}}
+                <input type="email" name="email" id="email" placeholder="email" autofocus>
+            {{/if}}
+        </div>
     </div>
-  {{/if}}
-  {{#if messages.error}}
-    <div class="text-danger">
-      {{#each messages.error}}
-        <div>{{msg}}</div>
-      {{/each}}
+    <div class="row">
+        <div class="three columns">
+            <input type="password" name="password" id="password" placeholder="password">
+        </div>
     </div>
-  {{/if}}
-  <form method="POST">
-    <label for="email">Email</label>
-    <input type="email" name="email" id="email" autofocus>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password">
-    <label for="umdusername">University User Name</label>
-    <input type="text" name="umdusername" id="umdusername" autofocus>
-    <label for="umdpass">University Password</label>
-    <input type="password" name="umdpass" id="umdpass">
-    <label for="phoneNumber">Phone Number</label>
-    <input type="text" name="phoneNumber" id="phoneNumber">
-    <label for="courses">Courses</label>
-    <textarea name="courses" id="courses" rows="7"></textarea>
-    <br>
-    <button type="submit">Send</button>
+    <div class="row">
+        <div class="three columns">
+            {{#if directory_id}}
+                <input type="text" name="umdusername" id="umdusername" placeholder="umd username" value="{{directory_id}}" autofocus>
+            {{else}}
+                <input type="text" name="umdusername" id="umdusername" placeholder="umd username" autofocus>
+            {{/if}}
+        </div>
+        <div class="nine columns animation">
+            {{#if messages.success}}
+              <div class="text-success">
+                {{#each messages.success}}
+                  <div>{{msg}}</div>
+                {{/each}}
+              </div>
+            {{/if}}
+            {{#if messages.error}}
+              <div class="text-danger">
+                {{#each messages.error}}
+                  <div>{{msg}}</div>
+                {{/each}}
+              </div>
+            {{/if}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="three columns">
+            <input type="password" name="umdpass" id="umdpass" placeholder="umd password">
+        </div>
+    </div>
+    <div class="row">
+        <div class="two columns">
+            <button type="submit">Send</button>
+        </div>
+    </div>
   </form>
 </div>
