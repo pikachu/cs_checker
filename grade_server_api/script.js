@@ -22,7 +22,7 @@ async function loginToGradeServer(instance, username, password) {
     await page.on('onResourceReceived', async () => {
         try {
             const content = await page.property('content');
-            if (content.includes('Fatal Error')) throw new Error('Invalid Login');
+            if (content.includes('Fatal Error')) throw new Error('InvalidLogin');
             loginSucceeded(page);
         } catch (e) {
             loginFailed(e);
@@ -81,13 +81,25 @@ async function checkUser(user) {
         console.error(`User ${user.directory_id} has invalid login information!`);
         return;
     }
-    const courses = (await getCourses(userPage)).filter(courseInfo =>
-        Object.keys(courseGrades).includes(courseInfo.course)
-    );
+    let courses;
+    try {
+        courses = (await getCourses(userPage)).filter(courseInfo =>
+            Object.keys(courseGrades).includes(courseInfo.course)
+        );
+    } catch (e) {
+        console.error(`Could not get courses for user ${user.directory_id}`);
+        return;
+    }
 
     for (let i = 0; i < courses.length; i++) {
         const courseInfo = courses[i];
-        const grade = await getGrade(userPage, courseInfo);
+        let grade;
+        try {
+            grade = await getGrade(userPage, courseInfo);
+        } catch (e) {
+            console.error(`Failed to get grade for user ${user.directory_id} and course ${courseInfo.course}`);
+            return;
+        }
         if (courseGrades[courseInfo.course] !== grade) {
             console.log(`updating ${courseInfo.course} course grade for ${user.directory_id}`);
             await knex('grades').where('user_id', user.id).where('course_code', courseInfo.course).update('grade', grade);
