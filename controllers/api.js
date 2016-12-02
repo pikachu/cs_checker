@@ -1,5 +1,5 @@
 const bookshelf = require('../bookshelf');
-const validateCourse = require('../phantom_scripts/testClasses').testValidClasses;
+const validateCourse = require('../grade_server_api/testClasses').testValidClasses;
 
 exports.deleteCourse = function (req, res) {
     const courseCode = req.body.courseCode;

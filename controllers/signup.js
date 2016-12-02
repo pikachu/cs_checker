@@ -1,7 +1,7 @@
-const auth = require('./utils/authentication');
-const crypt = require('./utils/encryption');
-const testValidLogin = require('../phantom_scripts/testLogin').testValidLogin;
-const db = require('./utils/db');
+const auth = require('../common/authentication');
+const crypt = require('../common/encryption');
+const testValidLogin = require('../grade_server_api/testLogin').testValidLogin;
+const db = require('../common/db');
 
 /**
  * GET /contact

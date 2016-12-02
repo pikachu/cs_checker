@@ -1,4 +1,4 @@
-const auth = require('./utils/authentication');
+const auth = require('../common/authentication');
 
 /**
  * GET /contact

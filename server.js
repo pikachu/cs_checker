@@ -11,7 +11,7 @@ const bodyParser = require('body-parser');
 const expressValidator = require('express-validator');
 const dotenv = require('dotenv');
 const exphbs = require('express-handlebars');
-const auth = require('./controllers/utils/authentication');
+const auth = require('./common/authentication');
 const api = require('./controllers/api');
 
 // Load environment variables from .env file

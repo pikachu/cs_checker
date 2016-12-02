@@ -1,7 +1,7 @@
-const checkUser = require('../script').checkUser;
-const knex = require('../../config/knex');
+const checkUser = require('./grade_server_api/script').checkUser;
+const knex = require('./config/knex');
 const PromisePool = require('es6-promise-pool');
-const crypt = require('../../controllers/utils/encryption');
+const crypt = require('./common/encryption');
 
 async function checkGrades(concurrency) {
     const users = await knex('users').select();

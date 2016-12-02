@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
-const config = require('../../config');
-const bookshelf = require('../../bookshelf');
+const config = require('../config');
+const bookshelf = require('../bookshelf');
 // create reusable transporter object using the default SMTP transport
 const transporter = nodemailer.createTransport(`smtps://${config.email}:${config.epass}@smtp.gmail.com`);
 

@@ -1,5 +1,5 @@
 const crypt = require('./encryption');
-const knex = require('../../config/knex.js');
+const knex = require('../config/knex.js');
 
 exports.getUser = userInfo => {
     const queryAttr = typeof userInfo === 'string' ? 'email' : 'id';

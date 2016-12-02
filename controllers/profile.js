@@ -3,7 +3,7 @@ var Grade = require('../models/grade');
 var dashboard = require('../dboard');
 var bookshelf = require('../bookshelf');
 var logout = require('../controllers/logout');
-var encryption = require('./utils/encryption');
+var encryption = require('../common/encryption');
 // var formidable = require('formidable');
 var util = require('util');
 
