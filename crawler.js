@@ -3,7 +3,7 @@ const script = require('./grade_server_api/script');
 const knex = require('./config/knex');
 const PromisePool = require('es6-promise-pool');
 const crypt = require('./common/encryption');
-const phantom = require('phantom');
+const INTERVAL = 1;
 
 async function checkGrades(concurrency) {
     const users = await knex('users').select();
@@ -21,3 +21,11 @@ async function checkGrades(concurrency) {
     await pool.start();
     console.log('Complete');
 }
+
+(async function main() {
+    console.info('Starting scan...');
+    await checkGrades(10);
+    console.info('Scan Completed');
+
+    setTimeout(main, INTERVAL * 60 * 1000);
+}());
