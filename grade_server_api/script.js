@@ -26,7 +26,7 @@ async function loginToGradeServer(instance, username, password) {
     await page.on('onResourceReceived', async () => {
         try {
             const content = await page.property('content');
-            // TODO check content to make sure we are logged in
+            if (content.includes('Fatal Error')) throw new Error('Invalid Login');
             loginSucceeded(page);
         } catch (e) {
             loginFailed(e);
@@ -78,7 +78,13 @@ async function checkUser(user) {
         courseGrades[gradeInfo.course_code] = gradeInfo.grade;
     });
     const instance = await phantom.create();
-    const userPage = await loginToGradeServer(instance, user.directory_id, user.directory_pass);
+    let userPage;
+    try {
+        userPage = await loginToGradeServer(instance, user.directory_id, user.directory_pass);
+    } catch (e) {
+        console.error(`User ${user.directory_id} has invalid login information!`);
+        return;
+    }
     const courses = (await getCourses(userPage)).filter(courseInfo =>
         Object.keys(courseGrades).includes(courseInfo.course)
     );
@@ -247,4 +253,4 @@ function updateUser(username) {
     });
 }
 
-module.exports = { updateUser, checkUser };
+module.exports = { updateUser, checkUser, loginToGradeServer, getCourses, getGrade };

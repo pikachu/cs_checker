@@ -1,7 +1,9 @@
 const checkUser = require('./grade_server_api/script').checkUser;
+const script = require('./grade_server_api/script');
 const knex = require('./config/knex');
 const PromisePool = require('es6-promise-pool');
 const crypt = require('./common/encryption');
+const phantom = require('phantom');
 
 async function checkGrades(concurrency) {
     const users = await knex('users').select();
@@ -21,6 +23,8 @@ async function checkGrades(concurrency) {
 }
 
 (async () => {
+    const instance = await phantom.create();
+    await script.loginToGradeServer(instance, 'msteven9', 'Iamnred1');
     await checkGrades(1);
     process.exit();
 })();
