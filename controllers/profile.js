@@ -23,7 +23,10 @@ exports.profileGet = function (req, res) {
                 email: req.session.user.email,
                 directory_id: req.session.user.directory_id,
                 classes: courses,
-                phone_number: req.session.user.phone_number
+                phone_number: req.session.user.phone_number,
+                getsEmails: req.session.user.getsEmails,
+                getsTexts: req.session.user.getsTexts,
+                validCredentials: req.session.user.validCredentials,
             });
         });
     });
