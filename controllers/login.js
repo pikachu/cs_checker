@@ -21,7 +21,9 @@ exports.loginPost = (req, res) => {
             });
         } else {
             req.flash('error', { msg: err.message });
-            res.redirect('/login');
+            res.render('login', {
+                email: req.body.email
+            });
         }
     });
 };

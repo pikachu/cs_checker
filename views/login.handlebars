@@ -1,18 +1,4 @@
 <div class="container">
-  {{#if messages.success}}
-    <div class="text-success">
-      {{#each messages.success}}
-        <div>{{msg}}</div>
-      {{/each}}
-    </div>
-  {{/if}}
-  {{#if messages.error}}
-    <div class="text-danger">
-      {{#each messages.error}}
-        <div>{{msg}}</div>
-      {{/each}}
-    </div>
-  {{/if}}
   <img src="http://www.cs.umd.edu/Outreach/hsContest13/icons/TurtleCS.jpg" class="logo" />
   <div class="row">
       <h1>UMD CS Grade Notifier</h1>
@@ -20,17 +6,37 @@
   <form method="POST">
       <div class="row">
           <div class="three columns">
+              {{#if email}}
+              <input type="text" name="email" id="email" placeholder="email" value="{{email}}" autofocus>
+              {{else}}
               <input type="text" name="email" id="email" placeholder="email" autofocus>
+              {{/if}}
           </div>
       </div>
       <div class="row">
           <div class="three columns">
               <input type="password" name="password" id="password" placeholder="password">
           </div>
+          <div class="nine columns">
+              {{#if messages.success}}
+                <div class="text-success">
+                  {{#each messages.success}}
+                    <div>{{msg}}</div>
+                  {{/each}}
+                </div>
+              {{/if}}
+              {{#if messages.error}}
+                <div class="text-danger">
+                  {{#each messages.error}}
+                    <div>{{msg}}</div>
+                  {{/each}}
+                </div>
+              {{/if}}
+          </div>
       </div>
     <div class="row">
         <div class="two columns">
-            <button type="submit">save</div>
+            <button type="submit">login</div>
         </div>
     </div>
   </form>

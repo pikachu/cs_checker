@@ -2,4 +2,4 @@
 /**
  * GET /logout
  */
-exports.logoutGet = (req, res) => req.session.destroy(() => res.redirect('/'));
+exports.logoutGet = (req, res) => req.session.destroy(() => res.redirect('/login'));

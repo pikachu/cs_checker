@@ -30,6 +30,7 @@
                     }
                 });
             }
+
         </script>
         <img src="http://www.cs.umd.edu/Outreach/hsContest13/icons/TurtleCS.jpg" class="logo" />
         <div class="row">
@@ -51,10 +52,10 @@
                 <div class="two columns">
                     umd password
                 </div>
-                <div class="four columns">
+                <div class="seven columns">
 
                 {{#if validCredentials}}
-                    <!-- Our last check was good! -->
+                    Our last check indicates that you have valid credentials in. No need to update unless you manually changed your password.
                 {{else}}
                     <strong>YOU MUST UPDATE THIS NOW!</strong>
                 {{/if}}
@@ -114,8 +115,14 @@
                 <div class="two columns">
                     <button type="submit">save</button>
                 </div>
+            </form>
+
+                <div class="offset-by-one two columns">
+                    <form method="GET" action="/logout">
+                    <button type="submit">logout</button>
+                </form>
+                </div>
             </div>
-        </form>
 
 
 
