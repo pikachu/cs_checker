@@ -47,7 +47,7 @@ async function getCourses(page) {
     const nodes = xpath.select('//a[contains(@href, "viewGrades.cgi?courseID")]', doc);
 
     return nodes.map(node => {
-        const courseMatch = xpath.select('text()', node)[0].data.match(/CMSC(\d\d\d\d?[A-z]?)/);
+        const courseMatch = xpath.select('text()', node)[0].data.match(/CMSC(\d\d\d[A-z]?)/);
         return {
             href: xpath.select('@href', node)[0].value,
             course: courseMatch ? courseMatch[1] : null
