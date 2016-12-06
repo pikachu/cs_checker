@@ -10,7 +10,7 @@ function getNewGradesString(userId, callback) {
     bookshelf.knex('grades').where('user_id', userId).then(grades => {
         grades.forEach(grade => {
             htmlstr = `${htmlstr} <li><b> ${grade.course_code}:</b>  ${grade.grade}</li>`;
-            plaintext = `${plaintext}${grade.course_code}: '${grade.grade}\n`;
+            plaintext = `${plaintext}${grade.course_code}: ${grade.grade}\n`;
         });
     }).then(() => {
         callback([htmlstr, plaintext]);

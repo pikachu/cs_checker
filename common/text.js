@@ -16,7 +16,7 @@ function sendTextToUser(id) {
             client.sms.messages.create({
                 to: phoneNumber,
                 from: config.phone,
-                body: message
+                body: `Your CS grades have changed!\n${message[1]}`
             }, (error, resp) => {
                 // The HTTP request to Twilio will run asynchronously. This callback
                 // function will be called when a response is received from Twilio
@@ -38,7 +38,5 @@ function sendTextToUser(id) {
         });
     });
 }
-
-sendTextToUser(7);
 
 module.exports = { sendTextToUser };
