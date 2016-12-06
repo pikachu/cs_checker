@@ -17,11 +17,11 @@ function getNewGradesString(userId, callback) {
     });
 }
 
-function sendMessage(userId) {
+function sendEmail(userId) {
     getNewGradesString(userId, message => {
-        const htmlstr = `<b>Your grades have changed!</b><br>Here are your new grades:<br><ul>${message[0]}</ul>`;
-        const plaintext = `Your grades have changed!\nHere are your new grades:\n${message[1]}`;
-        bookshelf.knex('users').where('id',userId).then(users => {
+        const htmlstr = `<b>Your grades have changed!</b><br><ul>${message[0]}</ul>`;
+        const plaintext = `Your grades have changed!\n${message[1]}`;
+        bookshelf.knex('users').where('id', userId).then(users => {
             const user = users[0];
             // setup e-mail data with unicode symbols
             const mailOptions = {
@@ -37,10 +37,10 @@ function sendMessage(userId) {
                 if (error) {
                     return console.log(error);
                 }
-                console.log('Message sent: ' + info.response);
+                console.log(`Message sent: ${info.response}`);
             });
         });
     });
 }
 
-module.exports = { sendMessage };
+module.exports = { sendEmail, getNewGradesString };

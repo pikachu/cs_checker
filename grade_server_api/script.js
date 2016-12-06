@@ -1,6 +1,7 @@
 const phantom = require('phantom');
 const db = require('../common/db');
-const sendMessage = require('../common/email').sendMessage;
+const sendEmail = require('../common/email').sendEmail;
+const sendText = require('../common/text').sendText;
 const xpath = require('xpath');
 const Dom = require('xmldom').DOMParser;
 const knex = require('../config/knex');
@@ -90,7 +91,7 @@ async function checkUser(user) {
         console.error(`Could not get courses for user ${user.directory_id}`);
         return;
     }
-
+    let shouldNotify = false;
     for (let i = 0; i < courses.length; i++) {
         const courseInfo = courses[i];
         let grade;
@@ -103,6 +104,15 @@ async function checkUser(user) {
         if (courseGrades[courseInfo.course] !== grade) {
             console.log(`updating ${courseInfo.course} course grade for ${user.directory_id}`);
             await knex('grades').where('user_id', user.id).where('course_code', courseInfo.course).update('grade', grade);
+            shouldNotify = true;
+        }
+    }
+    if (shouldNotify) {
+        if (user.getsEmails) {
+            sendEmail(user.id);
+        }
+        if (user.getsTexts && user.phone_number && user.phone_number !== '') {
+            sendText(user.id);
         }
     }
     console.log(`Finished for user ${user.directory_id}`);
