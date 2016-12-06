@@ -8,7 +8,7 @@ const client = new twilio.RestClient(config.sid, config.token);
 
 // Create a new REST API client to make authenticated requests against the
 // twilio back end
-function sendTextToUser(id) {
+function sendText(id) {
     bookshelf.knex('users').where('id', id).then(users => {
         const user = users[0];
         const phoneNumber = `+1${user.phone_number}`;
@@ -39,4 +39,4 @@ function sendTextToUser(id) {
     });
 }
 
-module.exports = { sendTextToUser };
+module.exports = { sendText };
