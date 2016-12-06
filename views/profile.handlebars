@@ -31,12 +31,17 @@
                 });
             }
 
+            function addAnimation(){
+                console.log("Adding animation");
+                $('.saveButton').html('<img style="width: 20px; display:block; margin:auto;" src="http://sampsonresume.com/labs/pIkfp.gif">');
+            }
+
         </script>
         <img src="http://www.cs.umd.edu/Outreach/hsContest13/icons/TurtleCS.jpg" class="logo" />
         <div class="row">
             <h1>UMD CS Grade Notifier (Dashboard - {{email}})</h1>
         </div>
-        <form method="POST">
+        <form method="POST" onSubmit="addAnimation()">
             <div class="row">
                 <div class="three columns">
                     <input type="text" value="{{directory_id}}" readonly>
@@ -112,12 +117,12 @@
                 {{/if}}
             </div>
             <div class="row">
-                <div class="two columns">
+                <div class="two columns saveButton">
                     <button type="submit">save</button>
                 </div>
             </form>
 
-                <div class="offset-by-one two columns">
+                <div class="two columns">
                     <form method="GET" action="/logout">
                     <button type="submit">logout</button>
                 </form>

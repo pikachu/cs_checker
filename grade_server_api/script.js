@@ -69,7 +69,7 @@ async function getGrade(page, course) {
     }
 }
 
-async function checkUser(user) {
+async function checkUser(user, sendMessageIfNecessary) {
     const courseGrades = {};
     (await db.getUserGrades(user)).forEach(gradeInfo => {
         courseGrades[gradeInfo.course_code] = gradeInfo.grade;
@@ -107,7 +107,7 @@ async function checkUser(user) {
             shouldNotify = true;
         }
     }
-    if (shouldNotify) {
+    if (shouldNotify && sendMessageIfNecessary) {
         if (user.getsEmails) {
             sendEmail(user.id);
         }

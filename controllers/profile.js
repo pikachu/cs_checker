@@ -38,7 +38,6 @@ exports.updateProfile = async function (req, res) {
     console.log(`The user id is ${req.session.user.id}`);
     console.log(req.body);
     if (req.body.newUMDPass && req.body.newUMDPass !== '') {
-        console.log("updating password");
         const instance = await phantom.create();
         const encryptedPass = encryption.encrypt(req.body.newUMDPass);
         await bookshelf.knex('users').where('id', req.session.user.id).update({
@@ -47,7 +46,6 @@ exports.updateProfile = async function (req, res) {
         try {
             await script.loginToGradeServer(instance,
                 req.session.user.directory_id, req.body.newUMDPass);
-            console.log("Valid new pass");
             await bookshelf.knex('users').where('id', req.session.user.id).update({
                 validCredentials: true
             });
@@ -57,7 +55,7 @@ exports.updateProfile = async function (req, res) {
             });
         }
     }
-    console.log("updating emails texts newphone");
+    await script.checkUser(req.session.user, false);
     await bookshelf.knex('users').where('id', req.session.user.id).update({
         getsEmails: req.body.getsEmails ? true : false,
         getsTexts: req.body.getsTexts ? true : false,

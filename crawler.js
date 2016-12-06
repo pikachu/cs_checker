@@ -12,7 +12,7 @@ async function checkGrades(concurrency) {
             const user = users.pop();
             console.log(`Checking user: ${user.directory_id}`)
             user.directory_pass = crypt.decrypt(user.directory_pass);
-            return checkUser(user);
+            return checkUser(user, true);
         } else {
             return null;
         }
