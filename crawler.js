@@ -10,9 +10,14 @@ async function checkGrades(concurrency) {
     const pool = new PromisePool(() => {
         if (users.length > 0) {
             const user = users.pop();
-            console.log(`Checking user: ${user.directory_id}`)
-            user.directory_pass = crypt.decrypt(user.directory_pass);
-            return checkUser(user, true);
+            if (user.validCredentials) {
+                console.log(`Checking user: ${user.directory_id}`)
+                user.directory_pass = crypt.decrypt(user.directory_pass);
+                return checkUser(user, true);
+            } else {
+                console.log(`User: ${user.directory_id} has invalid credentials`);
+                return null;
+            }
         } else {
             return null;
         }

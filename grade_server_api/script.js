@@ -6,6 +6,9 @@ const xpath = require('xpath');
 const Dom = require('xmldom').DOMParser;
 const knex = require('../config/knex');
 
+/*
+* TODO: Make sure that this is only called if we have valid creds in the first place.
+*/
 async function loginToGradeServer(instance, username, password) {
     const page = await instance.createPage();
     const status = await page.open('https://grades.cs.umd.edu/classWeb/login.cgi');
@@ -79,6 +82,7 @@ async function checkUser(user, sendMessageIfNecessary) {
     try {
         userPage = await loginToGradeServer(instance, user.directory_id, user.directory_pass);
     } catch (e) {
+        await db.setValidCredentials(user.directory_id, false);
         console.error(`User ${user.directory_id} has invalid login information!`);
         return;
     }

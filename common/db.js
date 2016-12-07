@@ -15,3 +15,8 @@ exports.getUserGrades = user => knex('grades').where('user_id', user.id);
 
 exports.createUser = userInfo => knex('users').insert(userInfo).returning('*').then(users => users[0]);
 exports.createGrade = gradeInfo => knex('grades').insert(gradeInfo).returning('*').then(grades => grades[0]);
+
+exports.setValidCredentials = (directory_id, newCredSettings) => {
+    knex('users').where('directory_id', directory_id).update({ validCredentials: newCredSettings }).then();
+//    .update({ validCredentials: newCredSettings });
+};
