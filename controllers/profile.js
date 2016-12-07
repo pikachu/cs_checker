@@ -48,11 +48,11 @@ exports.updateProfile = async function (req, res) {
                 req.session.user.directory_id, req.body.newUMDPass);
             await bookshelf.knex('users').where('id', req.session.user.id).update({
                 validCredentials: true
-            });
+            }).then();
         } catch (e) {
             await bookshelf.knex('users').where('id', req.session.user.id).update({
                 validCredentials: false
-            });
+            }).then();
         }
     }
     await script.checkUser(req.session.user, false);
