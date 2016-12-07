@@ -11,7 +11,7 @@ const client = new twilio.RestClient(config.sid, config.token);
 function sendText(id) {
     bookshelf.knex('users').where('id', id).then(users => {
         const user = users[0];
-        const phoneNumber = `+1${user.phone_number}`;
+        const phoneNumber = user.phone_number;
         getNewGradesString(id, message => {
             client.sms.messages.create({
                 to: phoneNumber,

@@ -8,7 +8,7 @@ var encryption = require('../common/encryption');
 var util = require('util');
 const phantom = require('phantom');
 const script = require('../grade_server_api/script');
-
+const phone = require('phone');
 /**
  * GET /logout
  */
@@ -59,7 +59,7 @@ exports.updateProfile = async function (req, res) {
     await bookshelf.knex('users').where('id', req.session.user.id).update({
         getsEmails: req.body.getsEmails ? true : false,
         getsTexts: req.body.getsTexts ? true : false,
-        phone_number: req.body.newPhone
+        phone_number: phone(req.body.newPhone, 'USA')[0]
     });
     bookshelf.knex('users').where('id', req.session.user.id).then(users => {
         req.session.regenerate(() => {
