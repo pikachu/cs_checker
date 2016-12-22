@@ -32,6 +32,7 @@
     "phantomjs": "^2.1.7",
     "phantomjs-prebuilt": "^2.1.13",
     "phone": "^1.0.8",
+    "request": "^2.79.0",
     "system": "^1.1.1",
     "twilio": "^2.11.1",
     "xmldom": "^0.1.27",
