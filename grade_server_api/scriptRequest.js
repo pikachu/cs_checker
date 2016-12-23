@@ -5,98 +5,92 @@ const sendText = require('../common/text').sendText;
 const xpath = require('xpath');
 const Dom = require('xmldom').DOMParser;
 const knex = require('../config/knex');
-const request = require('request');
+const request = require('request-promise-native');
 
-function loginToGradeServer(username, password, callback) {
-    const reqBody = { username, password, submit: 'Login' };
-    request.post({ url: 'https://grades.cs.umd.edu/classWeb/login.cgi', formData: reqBody }, (error, response, body) => {
-        if (!error && response.statusCode === 200) {
-            callback(response.headers['set-cookie'][0]);
-        } else {
-            callback(null);
-        }
-    });
+async function loginToGradeServer(user, password) {
+    const reqBody = { user, password, submit: 'Login' };
+    const res = await request.post({ url: 'https://grades.cs.umd.edu/classWeb/login.cgi', formData: reqBody, resolveWithFullResponse: true });
+    return res.headers['set-cookie'][0];
 }
 
-function getCourses(cookie, callback) {
+async function getCourses(cookie) {
+    console.log(cookie);
     const options = {
         url: 'https://grades.cs.umd.edu/classWeb/login.cgi',
         headers: {
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.8',
-            'Cache-Control': 'max-age=0',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Upgrade-Insecure-Requests': '1',
-            'Cookie': cookie
+            Cookie: 'sessionID=48b4aa24a69fca7e7ba60baefd5bdb1a'
         }
     };
-    request(options, (error, response, body) => {
-        if (!error && response.statusCode === 200) {
-            const doc = new Dom().parseFromString(body);
-            const nodes = xpath.select('//a[contains(@href, "viewGrades.cgi?courseID")]', doc);
-            callback(nodes.map(node => {
-                const courseMatch = xpath.select('text()', node)[0].data.match(/CMSC(\d\d\d[A-z]?)/);
-                return {
-                    href: xpath.select('@href', node)[0].value,
-                    course: courseMatch ? courseMatch[1] : null
-                };
-            }));
-        }
-    });
+
+    try {
+        const html = await request.get(options);
+        console.log(html);
+        // const doc = new Dom().parseFromString(html);
+        // const nodes = xpath.select('//a[contains(@href, "viewGrades.cgi?courseID")]', doc);
+        // return nodes.map(node => {
+        //     const courseMatch = xpath.select('text()', node)[0].data.match(/CMSC(\d\d\d[A-z]?)/);
+        //     return {
+        //         href: xpath.select('@href', node)[0].value,
+        //         course: courseMatch ? courseMatch[1] : null
+        //     };
+        // });
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 /*
 * TODO: Make sure that this is only called if we have valid creds in the first place.
 */
-async function loginToGradeServer(instance, username, password) {
-    const page = await instance.createPage();
-    const status = await page.open('https://grades.cs.umd.edu/classWeb/login.cgi');
-    if (status === 'fail') throw Error('Failed to load grades.cs.umd.edu');
+// async function loginToGradeServer(instance, username, password) {
+//     const page = await instance.createPage();
+//     const status = await page.open('https://grades.cs.umd.edu/classWeb/login.cgi');
+//     if (status === 'fail') throw Error('Failed to load grades.cs.umd.edu');
+//
+//     let loginSucceeded;
+//     let loginFailed;
+//     const loginPromise = new Promise(
+//         (resolve, reject) => {
+//             loginSucceeded = resolve;
+//             loginFailed = reject;
+//         }
+//     );
+//
+//     await page.on('onResourceReceived', async () => {
+//         try {
+//             const content = await page.property('content');
+//             if (content.includes('Fatal Error')) throw new Error('InvalidLogin');
+//             loginSucceeded(page);
+//         } catch (e) {
+//             loginFailed(e);
+//         }
+//     });
+//
+//     const loginInfo = { username, password };
+//     await page.evaluate(function (obj) {
+//         const arr = document.getElementsByTagName('form');
+//         arr[0].elements.user.value = obj.username;
+//         arr[0].elements.password.value = obj.password;
+//         document.getElementsByTagName('form')[0].submit.click();
+//     }, loginInfo);
+//
+//     return await loginPromise;
+// }
 
-    let loginSucceeded;
-    let loginFailed;
-    const loginPromise = new Promise(
-        (resolve, reject) => {
-            loginSucceeded = resolve;
-            loginFailed = reject;
-        }
-    );
-
-    await page.on('onResourceReceived', async () => {
-        try {
-            const content = await page.property('content');
-            if (content.includes('Fatal Error')) throw new Error('InvalidLogin');
-            loginSucceeded(page);
-        } catch (e) {
-            loginFailed(e);
-        }
-    });
-
-    const loginInfo = { username, password };
-    await page.evaluate(function (obj) {
-        const arr = document.getElementsByTagName('form');
-        arr[0].elements.user.value = obj.username;
-        arr[0].elements.password.value = obj.password;
-        document.getElementsByTagName('form')[0].submit.click();
-    }, loginInfo);
-
-    return await loginPromise;
-}
-
-async function getCourses(page) {
-    await page.open('https://grades.cs.umd.edu/classWeb/login.cgi');
-    const content = await page.property('content');
-    const doc = new Dom().parseFromString(content);
-    const nodes = xpath.select('//a[contains(@href, "viewGrades.cgi?courseID")]', doc);
-
-    return nodes.map(node => {
-        const courseMatch = xpath.select('text()', node)[0].data.match(/CMSC(\d\d\d[A-z]?)/);
-        return {
-            href: xpath.select('@href', node)[0].value,
-            course: courseMatch ? courseMatch[1] : null
-        };
-    });
-}
+// async function getCourses(page) {
+//     await page.open('https://grades.cs.umd.edu/classWeb/login.cgi');
+//     const content = await page.property('content');
+//     const doc = new Dom().parseFromString(content);
+//     const nodes = xpath.select('//a[contains(@href, "viewGrades.cgi?courseID")]', doc);
+//
+//     return nodes.map(node => {
+//         const courseMatch = xpath.select('text()', node)[0].data.match(/CMSC(\d\d\d[A-z]?)/);
+//         return {
+//             href: xpath.select('@href', node)[0].value,
+//             course: courseMatch ? courseMatch[1] : null
+//         };
+//     });
+// }
 
 async function getGrade(page, course) {
     await page.open(`https://grades.cs.umd.edu/classWeb/${course.href}`);
@@ -163,3 +157,11 @@ async function checkUser(user, sendMessageIfNecessary) {
 }
 
 module.exports = { checkUser, loginToGradeServer, getCourses, getGrade };
+
+
+console.log('annnd go!');
+(async () => {
+    const cookie = await loginToGradeServer('msteven9', 'Welcometotheworldof1');
+    const courses = await getCourses(cookie);
+    console.log(courses);
+})();
