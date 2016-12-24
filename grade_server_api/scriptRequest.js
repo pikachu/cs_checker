@@ -7,6 +7,15 @@ const Dom = require('xmldom').DOMParser;
 const knex = require('../config/knex');
 const request = require('request-promise-native');
 
+const parserOptions = {
+    locator: {},
+    errorHandler: {
+        warning: () => {},
+        error: e => { console.error(e); },
+        fatalError: e => { console.error(e); }
+    }
+};
+
 async function loginToGradeServer(user, password) {
     const reqBody = { user, password, submit: 'Login' };
     const res = await request.post({ url: 'https://grades.cs.umd.edu/classWeb/login.cgi', formData: reqBody, resolveWithFullResponse: true });
@@ -23,7 +32,7 @@ async function loginToGradeServer(user, password) {
  to a link (string).
  */
 async function getCourses(htmlRaw) {
-    const doc = new Dom().parseFromString(htmlRaw);
+    const doc = new Dom(parserOptions).parseFromString(htmlRaw);
     const nodes = xpath.select('//a[contains(@href, "viewGrades.cgi?courseID")]', doc);
     return nodes.map(node => {
         const courseMatch = xpath.select('text()', node)[0].data.match(/CMSC(\d\d\d[A-z]?)/);
@@ -43,7 +52,7 @@ async function getGrade(cookie, courseObj) {
         }
     };
     const res = await request.get(options);
-    const doc = new Dom().parseFromString(res);
+    const doc = new Dom(parserOptions).parseFromString(res);
     const nodes = xpath.select('//table//table//tr[last()]/td[2]/text()', doc);
     try {
         console.log("LOOK AT ME");
@@ -107,8 +116,9 @@ module.exports = { checkUser, loginToGradeServer, getCourses, getGrade };
 
 
 (async () => {
-    const obj = await loginToGradeServer('iparikh', '-');
+    const obj = await loginToGradeServer('iparikh', 'Helloworld12');
     const courses = await getCourses(obj.body);
+    console.log(courses);
     const grade = await getGrade(obj.cookie, courses[0]);
     console.log(grade);
 })();
