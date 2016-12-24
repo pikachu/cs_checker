@@ -1,5 +1,5 @@
 const bookshelf = require('../bookshelf');
-const validateCourse = require('../grade_server_api/testClasses').testValidClasses;
+const testValidClass = require('../grade_server_api/testClasses').testValidClass;
 
 exports.deleteCourse = function (req, res) {
     const courseCode = req.body.courseCode;
@@ -27,7 +27,7 @@ exports.addCourse = function (req, res) {
                     res.status(400);
                     res.send();
                 } else {
-                    validateCourse(req.session.user.id, courseCode, coursesValid => {
+                    testValidClass(req.session.user.id, courseCode, coursesValid => {
                         if (coursesValid) {
                             bookshelf.knex('grades').insert({
                                 user_id: req.session.user.id,
