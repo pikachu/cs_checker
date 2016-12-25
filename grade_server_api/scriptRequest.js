@@ -6,6 +6,9 @@ const xpath = require('xpath');
 const Dom = require('xmldom').DOMParser;
 const knex = require('../config/knex');
 const request = require('request-promise-native');
+const parse5 = require('parse5');
+const xmlser = require('xmlserializer');
+
 
 const parserOptions = {
     locator: {},
@@ -15,6 +18,13 @@ const parserOptions = {
         fatalError: e => { console.error(e); }
     }
 };
+
+function parseHtml(rawHtml) {
+    const document = parse5.parse(rawHtml);
+    const xhtml = xmlser.serializeToString(document);
+    const doc = new Dom(parserOptions).parseFromString(xhtml);
+    return doc;
+}
 
 async function loginToGradeServer(user, password) {
     const reqBody = { user, password, submit: 'Login' };
@@ -52,11 +62,16 @@ async function getGrade(cookie, courseObj) {
         }
     };
     const res = await request.get(options);
-    const doc = new Dom(parserOptions).parseFromString(res);
-    const nodes = xpath.select('//table//table//tr[last()]/td[2]/text()', doc);
+
+    const doc = parseHtml(res);
+    // console.log(doc);
+    const select = xpath.useNamespaces({ x: 'http://www.w3.org/1999/xhtml' });
+
+    const nodes = select('//x:table//x:table//x:tr[last()]/x:td[2]/text()', doc);
     try {
         console.log("LOOK AT ME");
         console.log(nodes);
+        console.log(nodes[0].data)
         return parseFloat(nodes[0].data);
     } catch (e) {
         return null;
@@ -116,7 +131,7 @@ module.exports = { checkUser, loginToGradeServer, getCourses, getGrade };
 
 
 (async () => {
-    const obj = await loginToGradeServer('iparikh', 'Helloworld12');
+    const obj = await loginToGradeServer('iparikh', '-');
     const courses = await getCourses(obj.body);
     console.log(courses);
     const grade = await getGrade(obj.cookie, courses[0]);
