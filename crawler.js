@@ -1,5 +1,5 @@
-const checkUser = require('./grade_server_api/script').checkUser;
-const script = require('./grade_server_api/script');
+const checkUser = require('./grade_server_api/scriptRequest').checkUser;
+const script = require('./grade_server_api/scriptRequest');
 const knex = require('./config/knex');
 const PromisePool = require('es6-promise-pool');
 const crypt = require('./common/encryption');

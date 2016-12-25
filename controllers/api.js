@@ -1,5 +1,6 @@
 const bookshelf = require('../bookshelf');
 const testValidClass = require('../grade_server_api/testClasses').testValidClass;
+const scriptRequest = require('../grade_server_api/scriptRequest');
 
 exports.deleteCourse = function (req, res) {
     const courseCode = req.body.courseCode;

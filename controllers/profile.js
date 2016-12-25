@@ -6,8 +6,7 @@ var logout = require('../controllers/logout');
 var encryption = require('../common/encryption');
 // var formidable = require('formidable');
 var util = require('util');
-const phantom = require('phantom');
-const script = require('../grade_server_api/script');
+const script = require('../grade_server_api/scriptRequest');
 const phone = require('phone');
 /**
  * GET /logout
@@ -38,21 +37,19 @@ exports.updateProfile = async function (req, res) {
     console.log(`The user id is ${req.session.user.id}`);
     console.log(req.body);
     if (req.body.newUMDPass && req.body.newUMDPass !== '') {
-        const instance = await phantom.create();
         const encryptedPass = encryption.encrypt(req.body.newUMDPass);
         await bookshelf.knex('users').where('id', req.session.user.id).update({
             directory_pass: encryptedPass
         });
         try {
-            await script.loginToGradeServer(instance,
-                req.session.user.directory_id, req.body.newUMDPass);
+            await script.loginToGradeServer(req.session.user.directory_id, req.body.newUMDPass);
             await bookshelf.knex('users').where('id', req.session.user.id).update({
                 validCredentials: true
-            }).then();
+            });
         } catch (e) {
             await bookshelf.knex('users').where('id', req.session.user.id).update({
                 validCredentials: false
-            }).then();
+            });
         }
     }
     await script.checkUser(req.session.user, false);

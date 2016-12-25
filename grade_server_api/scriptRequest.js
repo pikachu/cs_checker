@@ -1,4 +1,3 @@
-const phantom = require('phantom');
 const db = require('../common/db');
 const sendEmail = require('../common/email').sendEmail;
 const sendText = require('../common/text').sendText;
@@ -128,12 +127,3 @@ async function checkUser(user, sendMessageIfNecessary) {
 }
 
 module.exports = { checkUser, loginToGradeServer, getCourses, getGrade };
-
-
-(async () => {
-    const obj = await loginToGradeServer('iparikh', '-');
-    const courses = await getCourses(obj.body);
-    console.log(courses);
-    const grade = await getGrade(obj.cookie, courses[0]);
-    console.log(grade);
-})();
