@@ -1,5 +1,4 @@
 const checkUser = require('./grade_server_api/scriptRequest').checkUser;
-const script = require('./grade_server_api/scriptRequest');
 const knex = require('./config/knex');
 const PromisePool = require('es6-promise-pool');
 const crypt = require('./common/encryption');
@@ -11,16 +10,13 @@ async function checkGrades(concurrency) {
         if (users.length > 0) {
             const user = users.pop();
             if (user.validCredentials) {
-                console.log(`Checking user: ${user.directory_id}`)
+                console.log(`Checking user: ${user.directory_id}`);
                 user.directory_pass = crypt.decrypt(user.directory_pass);
                 return checkUser(user, true);
-            } else {
-                console.log(`User: ${user.directory_id} has invalid credentials`);
-                return null;
             }
-        } else {
             return null;
         }
+        return null;
     }, concurrency);
 
     await pool.start();

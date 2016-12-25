@@ -33,7 +33,6 @@ async function loginToGradeServer(user, password) {
     if (body && cookie) {
         return { body, cookie };
     }
-    console.log("Throwing error in loginToGradeServer!");
     throw new Error();
 }
 
@@ -61,19 +60,35 @@ async function getGrade(cookie, courseObj) {
         }
     };
     const res = await request.get(options);
-
     const doc = parseHtml(res);
     // console.log(doc);
     const select = xpath.useNamespaces({ x: 'http://www.w3.org/1999/xhtml' });
-
     const nodes = select('//x:table//x:table//x:tr[last()]/x:td[2]/text()', doc);
     try {
-        console.log("LOOK AT ME");
-        console.log(nodes);
-        console.log(nodes[0].data)
         return parseFloat(nodes[0].data);
     } catch (e) {
         return null;
+    }
+}
+
+async function updateCourseGrade(user, courseCode) {
+    try {
+        const credObj = await loginToGradeServer(user.directory_id, user.directory_pass);
+        const courses = await getCourses(credObj.body);
+        let courseInfo;
+        courses.forEach(cls => {
+            if (cls.course === courseCode) {
+                courseInfo = cls;
+            }
+        });
+        if (courseInfo) {
+            const grade = await getGrade(credObj.cookie, courseInfo);
+            await knex('grades').where('user_id', user.id).where('course_code', courseInfo.course).update('grade', grade);
+        } else {
+            throw new Error();
+        }
+    } catch (e) {
+        throw new Error();
     }
 }
 
@@ -117,13 +132,13 @@ async function checkUser(user, sendMessageIfNecessary) {
     }
     if (shouldNotify && sendMessageIfNecessary) {
         if (user.getsEmails) {
-            sendEmail(user.id);
+            await sendEmail(user.id);
         }
         if (user.getsTexts && user.phone_number && user.phone_number !== '') {
-            sendText(user.id);
+            await sendText(user.id);
         }
     }
     console.log(`Finished for user ${user.directory_id}`);
 }
 
-module.exports = { checkUser, loginToGradeServer, getCourses, getGrade };
+module.exports = { checkUser, loginToGradeServer, getCourses, getGrade, updateCourseGrade };

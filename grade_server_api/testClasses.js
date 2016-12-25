@@ -4,7 +4,7 @@ const loginToGradeServer = require('./scriptRequest').loginToGradeServer;
 const getCourses = require('./scriptRequest').getCourses;
 
 
-async function testValidClass(userId, classStr, callback) {
+async function testValidClass(userId, classStr) {
     const user = await getUser(userId);
     const username = user.directory_id;
     const password = user.directory_pass;
@@ -18,14 +18,11 @@ async function testValidClass(userId, classStr, callback) {
                     isValid = true;
                 }
             });
-            callback(isValid);
-        } else {
-            console.log('Issue logging in to grade server in testClasses.');
-            callback(false);
+            return isValid;
         }
+        return false;
     } catch (e) {
-        console.log('Something went wrong when trying to testValidClass');
-        callback(false);
+        return false;
     }
 }
 
