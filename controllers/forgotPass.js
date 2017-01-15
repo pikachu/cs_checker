@@ -44,7 +44,7 @@ exports.forgotPassPost = (req, res) => {
                         });
                         var message = "Your new password is: " + newPass + "\n\nPlease change this once logging in.";
                         var mailOptions = {
-                            from: 'cameron.payton7@gmail.com',
+                            from: 'umdcschecker@gmail.com',
                             to: req.body.email,
                             subject: 'CS Grade Checker Password Reset',
                             text: message
