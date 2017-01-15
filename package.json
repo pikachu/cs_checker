@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "migrate": "knex migrate:latest"
+    "migrate": "knex migrate:latest",
+    "start": "node --harmony-async-await server.js",
+    "crawl": "node --harmony-async-await crawler.js"  
   },
   "author": "",
   "license": "ISC",

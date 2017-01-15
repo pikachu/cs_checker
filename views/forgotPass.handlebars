@@ -1,0 +1,30 @@
+<div class="container">
+  <a href="/profile">
+      <img src="http://www.cs.umd.edu/Outreach/hsContest13/icons/TurtleCS.jpg" class="logo" />
+  </a>
+  <div class="row">
+      <h1>Forgot Password</h1>
+  </div>
+  <form method="POST">
+      <div class="row">
+          <div class="three columns">
+              {{#if email}}
+              <input type="text" name="email" id="email" placeholder="email" value="{{email}}" autofocus>
+              {{else}}
+              <input type="text" name="email" id="email" placeholder="email" autofocus>
+              {{/if}}
+          </div>
+      </div>
+    <div class="row">
+        <div class="two columns">
+            <button type="submit">Submit</button>
+        </div>
+    </div>
+    <div class="row">
+        <a href="/login">Back to login page</a>
+    </div>
+    <div class="row">
+        <p>{{emailStatus}}</p>
+    </div>
+  </form>
+</div>

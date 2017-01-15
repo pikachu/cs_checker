@@ -23,6 +23,7 @@ const signupController = require('./controllers/signup');
 const loginController = require('./controllers/login');
 const logoutController = require('./controllers/logout');
 const profileController = require('./controllers/profile');
+const forgotPassController = require('./controllers/forgotPass');
 
 const app = express();
 const hbs = exphbs.create({
@@ -56,6 +57,8 @@ app.post('/login', loginController.loginPost);
 app.get('/logout', logoutController.logoutGet);
 app.get('/profile', auth.requiredAuthentication, profileController.profileGet);
 app.post('/profile', profileController.updateProfile);
+app.get('/forgotPass', forgotPassController.forgotPassGet);
+app.post('/forgotPass', forgotPassController.forgotPassPost);
 
 // Production error handler
 if (app.get('env') === 'production') {
