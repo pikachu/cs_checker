@@ -1,12 +1,12 @@
 <div class="container">
-  <a href="/profile">
-      <img src="http://www.cs.umd.edu/Outreach/hsContest13/icons/TurtleCS.jpg" class="logo" />
-  </a>
-  <div class="row">
-      <h1>Forgot Password</h1>
-  </div>
-  <form method="POST">
-      <div class="row">
+    <a href="/profile">
+        <img src="http://www.cs.umd.edu/Outreach/hsContest13/icons/TurtleCS.jpg" class="logo" />
+    </a>
+    <div class="row">
+        <h1>Forgot Password</h1>
+    </div>
+    <form method="POST">
+        <div class="row">
           <div class="three columns">
               {{#if email}}
               <input type="text" name="email" id="email" placeholder="email" value="{{email}}" autofocus>
@@ -14,17 +14,35 @@
               <input type="text" name="email" id="email" placeholder="email" autofocus>
               {{/if}}
           </div>
-      </div>
-    <div class="row">
-        <div class="two columns">
-            <button type="submit">Submit</button>
         </div>
-    </div>
-    <div class="row">
-        <a href="/login">Back to login page</a>
-    </div>
-    <div class="row">
-        <p>{{emailStatus}}</p>
-    </div>
-  </form>
+        <div class="row">
+          <div class="three columns">
+              {{#if UMDID}}
+              <input type="text" name="UMDID" id="UMDID" placeholder="UMD directory ID" value="{{UMDID}}" autofocus>
+              {{else}}
+              <input type="text" name="UMDID" id="UMDID" placeholder="UMD directory ID" autofocus>
+              {{/if}}
+          </div>
+        </div>
+        <div class="row">
+          <div class="three columns">
+              {{#if UMDPass}}
+              <input type="password" name="UMDPass" id="UMDPass" placeholder="UMD Password" value="{{UMDPass}}" autofocus>
+              {{else}}
+              <input type="password" name="UMDPass" id="UMDPass" placeholder="UMD Password" autofocus>
+              {{/if}}
+          </div>
+        </div>
+        <div class="row">
+            <div class="two columns">
+                <button type="submit">Submit</button>
+            </div>
+        </div>
+        <div class="row">
+            <a href="/login">Back to login page</a>
+        </div>
+        <div class="row">
+            <p>{{emailStatus}}</p>
+        </div>
+    </form>
 </div>
