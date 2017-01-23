@@ -14,6 +14,11 @@
               <input type="text" name="email" id="email" placeholder="email" autofocus>
               {{/if}}
           </div>
+          <div class="nine columns">
+              {{#if emailStatus}}
+              <p>{{emailStatus}}</p>
+              {{/if}}
+          </div>
         </div>
         <div class="row">
           <div class="three columns">
@@ -40,9 +45,6 @@
         </div>
         <div class="row">
             <a href="/login">Back to login page</a>
-        </div>
-        <div class="row">
-            <p>{{emailStatus}}</p>
         </div>
     </form>
 </div>

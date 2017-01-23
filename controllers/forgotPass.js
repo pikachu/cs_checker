@@ -40,6 +40,7 @@ async function forgotPassPost(req, res) {
         res.render('forgotPass', {
             emailStatus: 'Please enter valid credentials!'
         });
+        return;
     }
     auth.hash(newPass, (err, salt, hash) => {
         if (err) throw err;

@@ -1,0 +1,38 @@
+<div class="container">
+    <a href="/profile">
+        <img src="http://www.cs.umd.edu/Outreach/hsContest13/icons/TurtleCS.jpg" class="logo" />
+    </a>
+    <div class="row">
+        <h1>Change Password</h1>
+    </div>
+    <form method="POST">
+        <div class="row">
+          <div class="three columns">
+              <input type="password" name="pass" id="pass" placeholder="current password" autofocus>
+          </div>
+          <div class="nine columns">
+              {{#if errorStatus}}
+              <p>{{emailStatus}}</p>
+              {{/if}}
+          </div>
+        </div>
+        <div class="row">
+          <div class="three columns">
+              <input type="password" name="newPass" id="newPass" placeholder="new password" autofocus>
+          </div>
+        </div>
+        <div class="row">
+          <div class="three columns">
+              <input type="password" name="newPassConfirm" id="newPassConfirm" placeholder="confirm password" autofocus>
+          </div>
+        </div>
+        <div class="row">
+            <div class="two columns">
+                <button type="submit">Submit</button>
+            </div>
+        </div>
+        <div class="row">
+            <a href="/profile">Back to profile page</a>
+        </div>
+    </form>
+</div>
