@@ -75,7 +75,9 @@
                     re-type password
                 </div>
                 <div class="seven columns">
-                    <strong>YOU MUST IMPLEMENT THIS NOW!</strong>
+                    {{#if errorMessage}}
+                        <b>{{errorMessage}}</b>
+                    {{/if}}
                 </div>
             </div>
             <div class="row">

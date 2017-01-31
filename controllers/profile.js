@@ -28,7 +28,25 @@ async function profileGet(req, res) {
 }
 
 async function updateProfile(req, res) {
-    if (req.body.newUMDPass && req.body.newUMDPass !== '') {
+    if (req.body.newUMDPass !== '' && req.body.newUMDPassRetype !== '') {
+        if (req.body.newUMDPass !== req.body.newUMDPassRetype) {
+            const classCodes = await bookshelf.knex('grades').where('user_id', req.session.user.id);
+            const courses = [];
+            classCodes.forEach(course => {
+                courses.push(course.course_code);
+            });
+            res.render('profile', {
+                errorMessage: 'Passwords must match!',
+                email: req.session.user.email,
+                directory_id: req.session.user.directory_id,
+                classes: courses,
+                phone_number: req.session.user.phone_number,
+                getsEmails: req.session.user.getsEmails,
+                getsTexts: req.session.user.getsTexts,
+                validCredentials: req.session.user.validCredentials
+            });
+            return;
+        }
         const encryptedPass = encryption.encrypt(req.body.newUMDPass);
         await bookshelf.knex('users').where('id', req.session.user.id).update({
             directory_pass: encryptedPass
@@ -44,13 +62,13 @@ async function updateProfile(req, res) {
             });
         }
     }
-    await script.checkUser(req.session.user, false);
     await bookshelf.knex('users').where('id', req.session.user.id).update({
         getsEmails: req.body.getsEmails ? true : false,
         getsTexts: req.body.getsTexts ? true : false,
         phone_number: phone(req.body.newPhone, 'USA')[0]
     });
     const users = await bookshelf.knex('users').where('id', req.session.user.id);
+    await script.checkUser(users[0], false);
     req.session.regenerate(() => {
         req.session.user = users[0];
         res.status(200);
