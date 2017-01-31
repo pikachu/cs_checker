@@ -4,9 +4,13 @@ const auth = require('../common/authentication');
  * GET /contact
  */
 exports.loginGet = (req, res) => {
-    res.render('login', {
-        title: 'Login'
-    });
+    if (req.session.user) {
+        res.redirect('/profile');
+    } else {
+        res.render('login', {
+            title: 'Login'
+        });
+    }
 };
 
 /**
