@@ -4,7 +4,7 @@ const encryption = require('../common/encryption');
 // var formidable = require('formidable');
 const script = require('../grade_server_api/scriptRequest');
 const phone = require('phone');
-
+const db = require('../common/db');
 /**
  * GET /logout
  */
@@ -56,7 +56,9 @@ async function updateProfile(req, res) {
             await bookshelf.knex('users').where('id', req.session.user.id).update({
                 validCredentials: true
             });
+            console.log('logged in successfully with new login');
         } catch (e) {
+            console.log('Catch triggered');
             await bookshelf.knex('users').where('id', req.session.user.id).update({
                 validCredentials: false
             });
@@ -67,10 +69,10 @@ async function updateProfile(req, res) {
         getsTexts: req.body.getsTexts ? true : false,
         phone_number: phone(req.body.newPhone, 'USA')[0]
     });
-    const users = await bookshelf.knex('users').where('id', req.session.user.id);
-    await script.checkUser(users[0], false);
+    const user = await db.getUser(req.session.user.id);
+    await script.checkUser(user, false);
     req.session.regenerate(() => {
-        req.session.user = users[0];
+        req.session.user = user;
         res.status(200);
         req.flash('success', { msg: `Information saved for ${req.body.email}` });
         res.redirect('/profile');

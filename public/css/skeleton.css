@@ -206,6 +206,7 @@ body {
 h1 {
     font-size: 1.2em;
     font-weight: 600;
+    margin-top: 0;
 }
 
 
@@ -299,6 +300,9 @@ input[type=checkbox] {
     color: #D27379;
 }
 
+.infoText{
+
+}
 ul {
     margin: 0px;
     margin-bottom: 10px;

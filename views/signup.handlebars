@@ -6,57 +6,51 @@
   </script>
   <img src="http://www.cs.umd.edu/Outreach/hsContest13/icons/TurtleCS.jpg" class="logo" />
   <div class="row">
-      <h1>UMD CS Grade Notifier</h1>
+      <div class="four columns">
+          <h1>UMD CS Grade Notifier</h1>
+          <form method="POST" onsubmit="addAnimation()">
+              <div>
+                  {{#if email}}
+                  <input type="email" name="email" id="email" placeholder="email" value="{{email}}" autofocus>
+                  {{else}}
+                  <input type="email" name="email" id="email" placeholder="email" autofocus>
+                  {{/if}}
+              </div>
+              <div>
+                  <input type="password" name="password" id="password" placeholder="password">
+              </div>
+              <div>
+                  {{#if directory_id}}
+                  <input type="text" name="umdusername" id="umdusername" placeholder="umd username" value="{{directory_id}}" autofocus>
+                  {{else}}
+                  <input type="text" name="umdusername" id="umdusername" placeholder="umd username" autofocus>
+                  {{/if}}
+              </div>
+              <div>
+                  {{#if messages.success}}
+                  <div class="text-success">
+                      {{#each messages.success}}
+                  <div>{{msg}}</div>
+                      {{/each}}
+                  </div>
+                  {{/if}}
+                  {{#if messages.error}}
+                      <div class="text-danger">
+                        {{#each messages.error}}
+                          <div>{{msg}}</div>
+                        {{/each}}
+                      </div>
+                  {{/if}}
+              </div>
+              <div>
+                  <input type="password" name="umdpass" id="umdpass" placeholder="umd password">
+              </div>
+              <div>
+                  <button style="width: 25%" type="submit">Send</button>
+              </div>
+          </form>
+          </div>
+      <div class="eight columns infoText">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      </div>
   </div>
-  <form method="POST" onsubmit="addAnimation()">
-    <div class="row">
-        <div class="three columns">
-            {{#if email}}
-                <input type="email" name="email" id="email" placeholder="email" value="{{email}}" autofocus>
-            {{else}}
-                <input type="email" name="email" id="email" placeholder="email" autofocus>
-            {{/if}}
-        </div>
-    </div>
-    <div class="row">
-        <div class="three columns">
-            <input type="password" name="password" id="password" placeholder="password">
-        </div>
-    </div>
-    <div class="row">
-        <div class="three columns">
-            {{#if directory_id}}
-                <input type="text" name="umdusername" id="umdusername" placeholder="umd username" value="{{directory_id}}" autofocus>
-            {{else}}
-                <input type="text" name="umdusername" id="umdusername" placeholder="umd username" autofocus>
-            {{/if}}
-        </div>
-        <div class="nine columns animation">
-            {{#if messages.success}}
-              <div class="text-success">
-                {{#each messages.success}}
-                  <div>{{msg}}</div>
-                {{/each}}
-              </div>
-            {{/if}}
-            {{#if messages.error}}
-              <div class="text-danger">
-                {{#each messages.error}}
-                  <div>{{msg}}</div>
-                {{/each}}
-              </div>
-            {{/if}}
-        </div>
-    </div>
-    <div class="row">
-        <div class="three columns">
-            <input type="password" name="umdpass" id="umdpass" placeholder="umd password">
-        </div>
-    </div>
-    <div class="row">
-        <div class="two columns">
-            <button type="submit">Send</button>
-        </div>
-    </div>
-  </form>
-</div>
