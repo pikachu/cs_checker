@@ -1,26 +1,24 @@
 const auth = require('../common/authentication');
 const crypt = require('../common/encryption');
-const script = require('../grade_server_api/script');
+const script = require('../grade_server_api/scriptRequest');
 const db = require('../common/db');
-const phantom = require('phantom');
 /**
  * GET /contact
  */
-exports.signupGet = (req, res) => {
+function signupGet(req, res) {
     res.render('signup', {
         title: 'Contact'
     });
-};
+}
 
 /**
  * POST /contact
  */
-exports.signupPost = async (req, res) => {
+async function signupPost(req, res) {
     const email = req.body.email;
     const password = req.body.password;
-    const instance = await phantom.create();
     try {
-        await script.loginToGradeServer(instance, req.body.umdusername, req.body.umdpass);
+        await script.loginToGradeServer(req.body.umdusername, req.body.umdpass);
     } catch (e) {
         req.session.regenerate(() => {
             req.flash('success', { msg: `Incorrect login for ${req.body.umdusername} ` });
@@ -56,4 +54,6 @@ exports.signupPost = async (req, res) => {
             });
         });
     });
-};
+}
+
+module.exports = { signupPost, signupGet };

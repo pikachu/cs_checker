@@ -1,23 +1,32 @@
 <div class="container">
   <img src="http://www.cs.umd.edu/Outreach/hsContest13/icons/TurtleCS.jpg" class="logo" />
   <div class="row">
-      <h1>UMD CS Grade Notifier</h1>
-  </div>
-  <form method="POST">
-      <div class="row">
-          <div class="three columns">
-              {{#if email}}
-              <input type="text" name="email" id="email" placeholder="email" value="{{email}}" autofocus>
-              {{else}}
-              <input type="text" name="email" id="email" placeholder="email" autofocus>
-              {{/if}}
+      <div class = "four columns">
+          <div>
+              <h1>UMD CS Grade Notifier</h1>
           </div>
-      </div>
-      <div class="row">
-          <div class="three columns">
-              <input type="password" name="password" id="password" placeholder="password">
-          </div>
-          <div class="nine columns">
+          <form method="POST">
+              <div>
+                  {{#if email}}
+                  <input type="text" name="email" id="email" placeholder="email" value="{{email}}" autofocus>
+                  {{else}}
+                  <input type="text" name="email" id="email" placeholder="email" autofocus>
+                  {{/if}}
+              </div>
+              <div>
+                  <input type="password" name="password" id="password" placeholder="password">
+              </div>
+              <div>
+                  <button style="width: 40%" type="submit">Log In</button>
+              </div>
+          </form>
+          <form action="/signup">
+              <div>
+                  <button style="width: 40%" type="submit">Sign Up</button>
+              </div>
+              <a href="/forgotPass">Forgot password?</a>
+          </form>
+          <div>
               {{#if messages.success}}
                 <div class="text-success">
                   {{#each messages.success}}
@@ -34,20 +43,8 @@
               {{/if}}
           </div>
       </div>
-    <div class="row">
-        <div class="two columns">
-            <button type="submit">Log In</button>
-        </div>
-    </div>
-  </form>
-  <form action="/signup">
-      <div class="row">
-          <div class="two columns">
-              <button type="submit">Sign Up</button>
-              <div>
-                  <a href="/forgotPass">Forgot password?</a>
-              </div>
-          </div>
+      <div class = "eight columns">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       </div>
-  </form>
+  </div>
 </div>
