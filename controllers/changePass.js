@@ -38,6 +38,14 @@ async function changePassPost(req, res) {
         /* pw confirm is wrong, need to render bad */
     }
 
+    if (!(req.body.newPass.length >= 6 && /\d+/.test(req.body.newPass) && /[a-zA-Z_]+/.test(req.body.newPass))){
+        console.log("Invalid Password!");
+        res.render('changePass', {
+            passStatus: 'Password must be at least 6 characters and contain a number and a letter.'
+        });
+        return;
+    }
+
     auth.authenticate(req.session.user.email, req.body.pass, (err, user) => {
         if (user) {
             console.log('correct password.');
