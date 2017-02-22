@@ -17,6 +17,17 @@ function signupGet(req, res) {
 async function signupPost(req, res) {
     const email = req.body.email;
     const password = req.body.password;
+    if (!(password.length >= 6 && /\d+/.test(password) && /[a-zA-Z_]+/.test(password))){
+        console.log("Invalid Password!");
+        req.session.regenerate(() => {
+            req.flash('success', { msg: `Password must be at least 6 characters and contain a number and a letter.` });
+            res.render('signup', {
+                email: req.body.email,
+                directory_id: req.body.umdusername
+            });
+        });
+        return;
+    }
     try {
         await script.loginToGradeServer(req.body.umdusername, req.body.umdpass);
     } catch (e) {
