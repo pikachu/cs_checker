@@ -2,6 +2,8 @@ const auth = require('../common/authentication');
 const crypt = require('../common/encryption');
 const script = require('../grade_server_api/scriptRequest');
 const db = require('../common/db');
+const knex = require('../config/knex.js');
+
 /**
  * GET /contact
  */
@@ -17,22 +19,27 @@ function signupGet(req, res) {
 async function signupPost(req, res) {
     const email = req.body.email;
     const password = req.body.password;
-    if (!(password.length >= 6 && /\d+/.test(password) && /[a-zA-Z_]+/.test(password))){
-        console.log("Invalid Password!");
-        req.session.regenerate(() => {
-            req.flash('success', { msg: `Password must be at least 6 characters and contain a number and a letter.` });
-            res.render('signup', {
-                email: req.body.email,
-                directory_id: req.body.umdusername
-            });
-        });
-        return;
+    const sameEmail = await knex('users').where({ email });
+    const sameUMDIds = await knex('users').where({ directory_id: req.body.umdusername });
+    let toRegen = false;
+    let msg;
+    if (!(password.length >= 6 && /\d+/.test(password) && /[a-zA-Z_]+/.test(password))) {
+        toRegen = true;
+        msg = `Password must be at least 6 characters and contain a number and a letter.`;
     }
     try {
         await script.loginToGradeServer(req.body.umdusername, req.body.umdpass);
     } catch (e) {
+        toRegen = true;
+        msg = `Incorrect login for ${req.body.umdusername}`;
+    }
+    if (sameEmail.length !== 0 || sameUMDIds.length !== 0) {
+        toRegen = true;
+        msg = `Either email or UMD ID already in use.`;
+    }
+    if (toRegen) {
         req.session.regenerate(() => {
-            req.flash('success', { msg: `Incorrect login for ${req.body.umdusername} ` });
+            req.flash('success', { msg: msg });
             res.render('signup', {
                 email: req.body.email,
                 directory_id: req.body.umdusername
